@@ -1,0 +1,15 @@
+[Unit]
+Description=Doorgy Service Agent
+Documentation=https://github.com/Anthonykung/Doorgy
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node doorgy.js
+WorkingDirectory=/usr/local/src/doorgy
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
