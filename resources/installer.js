@@ -26,7 +26,7 @@ anth.print('msg', 'Checking Directory Location');
 if (__dirname != '/usr/local/src/doorgy') {
   anth.print('msg', 'Relocation required, relocating...');
   try {
-    fse.copySync(__dirname, '/usr/local/src/doorgy');
+    fse.copySync(__dirname + '/../', '/usr/local/src/doorgy');
     anth.print('suc', 'Relocation Success');
   } catch (err) {
     anth.print('err', 'Unable to move directory');
