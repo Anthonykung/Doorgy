@@ -1,7 +1,6 @@
 [Unit]
 Description=Doorgy Service Agent
 Documentation=https://github.com/Anthonykung/Doorgy
-After=network.target
 
 [Service]
 ExecStart=/usr/bin/node /usr/local/src/doorgy/doorgy.js
