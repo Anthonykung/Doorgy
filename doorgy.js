@@ -181,13 +181,17 @@ process.on('message', message => {
 
 anth.print('msg', 'Starting Operation');
 
+let printNum = 0;
+
 function checkNetwork() {
   let  options = {
     host: 'doorgy.anth.dev',
     path: '/'
   };
   http.get(options, (res) => {
-    anth.print('suc', 'Connection Established');
+    if (!printNum) {
+      anth.print('suc', 'Connection Established');
+    }
     LED_NET.writeSync(1);
   }).on('error', function(error) {
     console.error('Error Detected:', error);
