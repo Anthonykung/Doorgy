@@ -176,22 +176,17 @@ while (ctrlSig) {
     }
   });*/
 
-  // Check For Network Connection
-  dns.resolve(server, function(err) {
-    if (err) {
-      // Turn off Network indicator
-      LED_NET.writeSync(0);
-      LED_ERR.writeSync(1);
-      anth.print('err', 'Unable to communicate with server');
-
-      // Note: Doorgy is designed to operate even when network
-      // connection has been disconnected, so there is no need
-      // to turn on Error indicator
-    } else {
-      // Turn on Network indicator if connection to server
-      // is established
-      anth.print('suc', 'Connection Established');
-      LED_NET.writeSync(1);
-    }
+  let  options = {
+    host: 'doorgy.anth.dev',
+    path: '/'
+  };
+  http.get(options, (res) => {
+    anth.print('suc', 'Connection Established');
+    LED_NET.writeSync(1);
+  }).on('error', function(error) {
+    console.error('Error Detected:', error);
+    LED_NET.writeSync(0);
+    LED_ERR.writeSync(1);
+    anth.print('err', 'Unable to communicate with server');
   });
 }
