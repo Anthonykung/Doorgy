@@ -164,7 +164,7 @@ while (ctrlSig) {
 
   // Listern for Locking Mechnism
   // Read File Method
-  fs.readFile('doorgy.json', function(err, data) {
+  /*fs.readFile('doorgy.json', function(err, data) {
     let comm = JSON.parse(data);
     if (comm.Lock.status == 1) {
       // Turn on Lock indicator
@@ -174,7 +174,7 @@ while (ctrlSig) {
       // Turn off Lock indicator
       LED_LCK.writeSync(0);
     }
-  });
+  });*/
 
   // Check For Network Connection
   dns.resolve(server, function(err) {
@@ -190,6 +190,7 @@ while (ctrlSig) {
     } else {
       // Turn on Network indicator if connection to server
       // is established
+      anth.print('suc', 'Connection Established');
       LED_NET.writeSync(1);
     }
   });
