@@ -14,7 +14,7 @@ const gpio = require('onoff').Gpio;
 const dns = require('dns');
 const fs = require('fs');
 const anth = require('./resources/anthonian.js');
-const { exec, spawn } = require('child_process');
+const { execSync, spawn } = require('child_process');
 const http = require('http');
 
 anth.anthdev();
@@ -160,6 +160,7 @@ function checkNetwork() {
   http.get(options, (res) => {
     if (!printNum) {
       anth.print('suc', 'Connection Established');
+      printNum++;
     }
     LED_NET.writeSync(1);
   }).on('error', function(error) {
@@ -190,13 +191,7 @@ PSH_BTN1.watch((err, value) => {
     LED_NET.unexport();
     LED_LCK.unexport();
     LED_ERR.unexport();
-    let cmd = spawn('shutdown -h now', [], { stdio: 'inherit' });
-    cmd.on('error', (error) => {
-      console.log(anth.red, 'ACLI Error:', error, anth.ori);
-    });
-    cmd.on('close', (code)=>{
-      console.log(anth.blue, 'ACLI Return:', code, anth.ori);
-    });
+    let cmd = execSync('shutdown -h now');
   }
   else {
     // Inform Servo Unit no motion is detected
