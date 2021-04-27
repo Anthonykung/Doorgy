@@ -91,9 +91,11 @@ process.on('message', message => {
   }
 });
 
-// Listern for Locking Mechnism
-// Read File Method
+// Begin Continuous Operation
 while (ctrlSig) {
+
+  // Listern for Locking Mechnism
+  // Read File Method
   fs.readFile('doorgy.json', function(err, data) {
     let comm = JSON.parse(data);
     if (comm.Lock.status == 1) {
@@ -105,10 +107,6 @@ while (ctrlSig) {
       LED_LCK.writeSync(0);
     }
   });
-}
-
-// Begin Continuous Operation
-while (ctrlSig) {
 
   // Check For Network Connection
   dns.resolve(server, function(err) {
