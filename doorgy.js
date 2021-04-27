@@ -84,37 +84,6 @@ IR_EXT.watch((err, value) => {
   }
 });
 
-// Define Shutdown Function
-PSH_BTN1.watch((err, value) => {
-  if (err) {
-    throw err;
-  }
-  else if (value) {
-    ctrlSig = 0;
-    LED_PWR.writeSync(0);
-    LED_PWR.writeSync(0);
-    LED_PWR.writeSync(0);
-    LED_PWR.writeSync(0);
-    IR_INT.unexport();
-    IR_EXT.unexport();
-    LED_PWR.unexport();
-    LED_NET.unexport();
-    LED_LCK.unexport();
-    LED_ERR.unexport();
-    exit(0);
-    let cmd = spawn('shutdown -h now', [], { stdio: 'inherit' });
-    cmd.on('error', (error) => {
-      console.log(anth.red, 'ACLI Error:', error, anth.ori);
-    });
-    cmd.on('close', (code)=>{
-      console.log(anth.blue, 'ACLI Return:', code, anth.ori);
-    });
-  }
-  else {
-    // Inform Servo Unit no motion is detected
-  }
-});
-
 function turnOffRed() {
   console.log('Lock Release');
   LED_LCK.writeSync(0);
@@ -201,4 +170,35 @@ function checkNetwork() {
   });
 }
 
-setInterval(checkNetwork, 100);
+let netCheck = setInterval(checkNetwork, 100);
+
+// Define Shutdown Function
+PSH_BTN1.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    ctrlSig = 0;
+    clearInterval(netCheck);
+    LED_PWR.writeSync(0);
+    LED_PWR.writeSync(0);
+    LED_PWR.writeSync(0);
+    LED_PWR.writeSync(0);
+    IR_INT.unexport();
+    IR_EXT.unexport();
+    LED_PWR.unexport();
+    LED_NET.unexport();
+    LED_LCK.unexport();
+    LED_ERR.unexport();
+    let cmd = spawn('shutdown -h now', [], { stdio: 'inherit' });
+    cmd.on('error', (error) => {
+      console.log(anth.red, 'ACLI Error:', error, anth.ori);
+    });
+    cmd.on('close', (code)=>{
+      console.log(anth.blue, 'ACLI Return:', code, anth.ori);
+    });
+  }
+  else {
+    // Inform Servo Unit no motion is detected
+  }
+});
