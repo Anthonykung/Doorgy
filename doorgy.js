@@ -84,6 +84,16 @@ while (ctrlSig) {
     }
     else if (value) {
       ctrlSig = 0;
+      LED_PWR.writeSync(1);
+      LED_NET.writeSync(1);
+      LED_LCK.writeSync(1);
+      LED_ERR.writeSync(1);
+      IR_INT.unexport();
+      IR_EXT.unexport();
+      LED_PWR.unexport();
+      LED_NET.unexport();
+      LED_LCK.unexport();
+      LED_ERR.unexport();
       let cmd = spawn('shutdown -h now', [], { stdio: 'inherit' });
       cmd.on('error', (error) => {
         console.log(anth.red, 'ACLI Error:', error, anth.ori);
@@ -130,6 +140,10 @@ while (ctrlSig) {
   // Free Resources If Termination Requested
   process.on('SIGINT', _ => {
     ctrlSig = 0;
+    LED_PWR.writeSync(1);
+    LED_NET.writeSync(1);
+    LED_LCK.writeSync(1);
+    LED_ERR.writeSync(1);
     IR_INT.unexport();
     IR_EXT.unexport();
     LED_PWR.unexport();
