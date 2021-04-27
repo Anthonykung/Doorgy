@@ -36,6 +36,8 @@ const LED_NET = new gpio(13, 'out');
 const LED_LCK = new gpio(16, 'out');
 const LED_ERR = new gpio(19, 'out');
 
+anth.print('suc', 'GPIO Defined');
+
 // Turn on power indicator
 LED_PWR.writeSync(1);
 
@@ -109,8 +111,15 @@ process.on('message', message => {
   }
 });
 
+anth.print('msg', 'Starting Operation');
+
+let printLog = 0;
+
 // Begin Continuous Operation
 while (ctrlSig) {
+  if (!printLog) {
+    anth.print('suc', 'Operation Started');
+  }
 
   // Listern for Locking Mechnism
   // Read File Method
