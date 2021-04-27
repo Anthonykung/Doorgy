@@ -126,7 +126,7 @@ PSH_BTN3.watch((err, value) => {
 });
 
 // Free Resources If Termination Requested
-process.on('SIGINT', _ => {
+/*process.on('SIGINT', _ => {
   ctrlSig = 0;
   IR_INT.unexport();
   IR_EXT.unexport();
@@ -135,7 +135,7 @@ process.on('SIGINT', _ => {
   LED_LCK.unexport();
   LED_ERR.unexport();
   exit(0);
-});
+});*/
 
 // Listern for Locking Mechnism
 // Child Process Method
