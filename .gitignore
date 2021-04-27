@@ -1,0 +1,24 @@
+# Anthonian Node Project Git Ignore
+# Created with <3 by Anthony Kung (anth.dev)
+# Date: July 19, 2020
+
+# Ignore Configuration Files
+config/
+
+# Ignore Logs
+logs/
+*.log
+server-log.log
+error-log.log
+npm-debug.log
+
+# Ignore TLS Certs
+*.crt
+*.pem
+*.key
+
+# Dependency directories
+node_modules/
+
+# Ignore Temporary Files
+tmp/

@@ -25,7 +25,7 @@ if (gpio.accessible) {
   // Define IR gpio
   var IR_INT = new gpio(5, 'in', 'both');
   var IR_EXT = new gpio(6, 'in', 'both');
-  var IR_EXT = new gpio(20, 'in', 'both');
+  var PSH_BTN = new gpio(20, 'in', 'both');
 
   // Define LED gpio
   var LED_PWR = new gpio(12, 'out');
