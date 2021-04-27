@@ -123,6 +123,7 @@ PSH_BTN3.watch((err, value) => {
 
 // Free Resources If Termination Requested
 process.on('SIGINT', _ => {
+  ctrlSig = 0;
   IR_INT.unexport();
   IR_EXT.unexport();
   LED_PWR.unexport();
