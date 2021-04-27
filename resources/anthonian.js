@@ -44,9 +44,9 @@ function anthdev() {
 function print(type, data) {
   let str = '';
   if (Array.isArray(data)) {
-    data.forEach(function(element) {
-      str.concat(' ' + element);
-    });
+    for (let i = 0; i < data.length; i++) {
+      str.concat(' ' + data[i]);
+    }
   }
   else {
     str = data;
