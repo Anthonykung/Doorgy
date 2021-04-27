@@ -28,7 +28,11 @@ let ctrlSig = 1;
 // Define IR gpio
 const IR_INT = new gpio(5, 'in', 'both');
 const IR_EXT = new gpio(6, 'in', 'both');
-const PSH_BTN = new gpio(20, 'in', 'both');
+
+// Define Buttons
+const PSH_BTN1 = new gpio(20, 'in', 'rising', {debounceTimeout: 100});
+const PSH_BTN2 = new gpio(21, 'in', 'rising', {debounceTimeout: 100});
+const PSH_BTN3 = new gpio(26, 'in', 'rising', {debounceTimeout: 100});
 
 // Define LED gpio
 const LED_PWR = new gpio(12, 'out');
@@ -68,7 +72,7 @@ IR_EXT.watch((err, value) => {
 });
 
 // Define Shutdown Function
-PSH_BTN.watch((err, value) => {
+PSH_BTN1.watch((err, value) => {
   if (err) {
     throw err;
   }
@@ -84,6 +88,36 @@ PSH_BTN.watch((err, value) => {
   }
   else {
     // Inform Servo Unit no motion is detected
+  }
+});
+
+// Simulate Lock On
+PSH_BTN2.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    // Turn on Lock indicator
+    LED_LCK.writeSync(1);
+  }
+  else {
+    // Turn off Lock indicator
+    LED_LCK.writeSync(0);
+  }
+});
+
+// Simulate Error
+PSH_BTN3.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    // Turn on Lock indicator
+    LED_ERR.writeSync(1);
+  }
+  else {
+    // Turn off Lock indicator
+    LED_ERR.writeSync(0);
   }
 });
 
