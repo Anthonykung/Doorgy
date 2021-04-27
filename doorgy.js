@@ -181,16 +181,20 @@ process.on('message', message => {
 
 anth.print('msg', 'Starting Operation');
 
-let  options = {
-  host: 'doorgy.anth.dev',
-  path: '/'
-};
-http.get(options, (res) => {
-  anth.print('suc', 'Connection Established');
-  LED_NET.writeSync(1);
-}).on('error', function(error) {
-  console.error('Error Detected:', error);
-  LED_NET.writeSync(0);
-  LED_ERR.writeSync(1);
-  anth.print('err', 'Unable to communicate with server');
-});
+function checkNetwork() {
+  let  options = {
+    host: 'doorgy.anth.dev',
+    path: '/'
+  };
+  http.get(options, (res) => {
+    anth.print('suc', 'Connection Established');
+    LED_NET.writeSync(1);
+  }).on('error', function(error) {
+    console.error('Error Detected:', error);
+    LED_NET.writeSync(0);
+    LED_ERR.writeSync(1);
+    anth.print('err', 'Unable to communicate with server');
+  });
+}
+
+setInterval(checkNetwork, 100);
