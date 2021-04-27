@@ -164,40 +164,16 @@ process.on('message', message => {
 
 anth.print('msg', 'Starting Operation');
 
-let printLog = 0;
-
-// Begin Continuous Operation
-while (ctrlSig) {
-  if (!printLog) {
-    anth.print('suc', 'Operation Started');
-    printLog++;
-  }
-
-  // Listern for Locking Mechnism
-  // Read File Method
-  /*fs.readFile('doorgy.json', function(err, data) {
-    let comm = JSON.parse(data);
-    if (comm.Lock.status == 1) {
-      // Turn on Lock indicator
-      LED_LCK.writeSync(1);
-    }
-    else {
-      // Turn off Lock indicator
-      LED_LCK.writeSync(0);
-    }
-  });*/
-
-  let  options = {
-    host: 'doorgy.anth.dev',
-    path: '/'
-  };
-  http.get(options, (res) => {
-    anth.print('suc', 'Connection Established');
-    LED_NET.writeSync(1);
-  }).on('error', function(error) {
-    console.error('Error Detected:', error);
-    LED_NET.writeSync(0);
-    LED_ERR.writeSync(1);
-    anth.print('err', 'Unable to communicate with server');
-  });
-}
+let  options = {
+  host: 'doorgy.anth.dev',
+  path: '/'
+};
+http.get(options, (res) => {
+  anth.print('suc', 'Connection Established');
+  LED_NET.writeSync(1);
+}).on('error', function(error) {
+  console.error('Error Detected:', error);
+  LED_NET.writeSync(0);
+  LED_ERR.writeSync(1);
+  anth.print('err', 'Unable to communicate with server');
+});
