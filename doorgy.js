@@ -43,9 +43,9 @@ const LED_ERR = new gpio(19, 'out');
 
 anth.print('suc', 'GPIO Defined');
 LED_PWR.writeSync(0);
-LED_PWR.writeSync(0);
-LED_PWR.writeSync(0);
-LED_PWR.writeSync(0);
+LED_NET.writeSync(0);
+LED_LCK.writeSync(0);
+LED_ERR.writeSync(0);
 
 // Turn on power indicator
 LED_PWR.writeSync(1);
@@ -181,10 +181,10 @@ PSH_BTN1.watch((err, value) => {
   else if (value) {
     ctrlSig = 0;
     clearInterval(netCheck);
-    LED_PWR.writeSync(0);
-    LED_PWR.writeSync(0);
-    LED_PWR.writeSync(0);
-    LED_PWR.writeSync(0);
+    LED_PWR.writeSync(1);
+    LED_NET.writeSync(0);
+    LED_LCK.writeSync(0);
+    LED_ERR.writeSync(0);
     IR_INT.unexport();
     IR_EXT.unexport();
     LED_PWR.unexport();
