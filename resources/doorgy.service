@@ -4,7 +4,7 @@ Documentation=https://github.com/Anthonykung/Doorgy
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/node doorgy.js
+ExecStart=/usr/bin/node /usr/local/src/doorgy/doorgy.js
 WorkingDirectory=/usr/local/src/doorgy
 StandardOutput=inherit
 StandardError=inherit
