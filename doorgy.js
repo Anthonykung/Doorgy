@@ -159,6 +159,7 @@ let printLog = 0;
 while (ctrlSig) {
   if (!printLog) {
     anth.print('suc', 'Operation Started');
+    printLog++;
   }
 
   // Listern for Locking Mechnism
@@ -180,6 +181,8 @@ while (ctrlSig) {
     if (err) {
       // Turn off Network indicator
       LED_NET.writeSync(0);
+      LED_ERR.writeSync(1);
+      anth.print('err', 'Unable to communicate with server');
 
       // Note: Doorgy is designed to operate even when network
       // connection has been disconnected, so there is no need
