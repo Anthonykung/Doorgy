@@ -15,6 +15,7 @@ const dns = require('dns');
 const fs = require('fs');
 const anth = require('./resources/anthonian.js');
 const { exec, spawn } = require('child_process');
+const http = require('http');
 
 anth.anthdev();
 anth.print('msg', 'Starting Doorgy Service');
@@ -56,9 +57,13 @@ IR_INT.watch((err, value) => {
   }
   else if (value) {
     // Inform Servo Unit montion is detected
+    console.log('IR Sense', value);
+    LED_ERR.writeSync(1);
   }
   else {
     // Inform Servo Unit no motion is detected
+    console.log('IR Not Sense', value);
+    LED_ERR.writeSync(0);
   }
 });
 
@@ -69,9 +74,13 @@ IR_EXT.watch((err, value) => {
   }
   else if (value) {
     // Inform Servo Unit montion is detected
+    console.log('IR Sense', value);
+    LED_ERR.writeSync(1);
   }
   else {
     // Inform Servo Unit no motion is detected
+    console.log('IR Not Sense', value);
+    LED_ERR.writeSync(0);
   }
 });
 
@@ -102,10 +111,12 @@ PSH_BTN2.watch((err, value) => {
   }
   else if (value) {
     // Turn on Lock indicator
+    console.log('Lock Sense', value);
     LED_LCK.writeSync(1);
   }
   else {
     // Turn off Lock indicator
+    console.log('Lock Not Sense', value);
     LED_LCK.writeSync(0);
   }
 });
