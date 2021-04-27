@@ -41,9 +41,13 @@ const LED_LCK = new gpio(16, 'out');
 const LED_ERR = new gpio(19, 'out');
 
 anth.print('suc', 'GPIO Defined');
+LED_PWR.writeSync(1);
+LED_NET.writeSync(1);
+LED_LCK.writeSync(1);
+LED_ERR.writeSync(1);
 
 // Turn on power indicator
-LED_PWR.writeSync(1);
+LED_PWR.writeSync(0);
 
 // Define Interial IR Function
 IR_INT.watch((err, value) => {
@@ -98,11 +102,11 @@ PSH_BTN2.watch((err, value) => {
   }
   else if (value) {
     // Turn on Lock indicator
-    LED_LCK.writeSync(1);
+    LED_LCK.writeSync(0);
   }
   else {
     // Turn off Lock indicator
-    LED_LCK.writeSync(0);
+    LED_LCK.writeSync(1);
   }
 });
 
@@ -113,11 +117,11 @@ PSH_BTN3.watch((err, value) => {
   }
   else if (value) {
     // Turn on Lock indicator
-    LED_ERR.writeSync(1);
+    LED_ERR.writeSync(0);
   }
   else {
     // Turn off Lock indicator
-    LED_ERR.writeSync(0);
+    LED_ERR.writeSync(1);
   }
 });
 
@@ -130,6 +134,7 @@ process.on('SIGINT', _ => {
   LED_NET.unexport();
   LED_LCK.unexport();
   LED_ERR.unexport();
+  exit(0);
 });
 
 // Listern for Locking Mechnism
@@ -138,11 +143,11 @@ process.on('message', message => {
   let comm = JSON.parse(message);
   if (comm.Lock.status == 1) {
     // Turn on Lock indicator
-    LED_LCK.writeSync(1);
+    LED_LCK.writeSync(0);
   }
   else {
     // Turn off Lock indicator
-    LED_LCK.writeSync(0);
+    LED_LCK.writeSync(1);
   }
 });
 
@@ -162,11 +167,15 @@ while (ctrlSig) {
     let comm = JSON.parse(data);
     if (comm.Lock.status == 1) {
       // Turn on Lock indicator
+      LED_LCK.writeSync(0);
+    }
+    else if (comm.Lock.status == 0) {
+      // Turn off Lock indicator
       LED_LCK.writeSync(1);
     }
     else {
-      // Turn off Lock indicator
-      LED_LCK.writeSync(0);
+      LED_LCK.writeSync(1);
+      LED_ERR.writeSync(0);
     }
   });
 
@@ -174,7 +183,7 @@ while (ctrlSig) {
   dns.resolve(server, function(err) {
     if (err) {
       // Turn off Network indicator
-      LED_NET.writeSync(0);
+      LED_NET.writeSync(1);
 
       // Note: Doorgy is designed to operate even when network
       // connection has been disconnected, so there is no need
@@ -182,7 +191,7 @@ while (ctrlSig) {
     } else {
       // Turn on Network indicator if connection to server
       // is established
-      LED_NET.writeSync(1);
+      LED_NET.writeSync(0);
     }
   });
 }
