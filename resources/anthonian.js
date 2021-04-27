@@ -13,20 +13,20 @@
 'use strict';
 
 // Super Duper Pinkish Pink
-export let pink = '\x1b[38;2;255;20;147m';
+let pink = '\x1b[38;2;255;20;147m';
 
 // Colors
-export let ori = '\x1b[0m';
-export let red = '\x1b[91m';
-export let green = '\x1b[92m';
-export let yellow = '\x1b[93m';
-export let blue = '\x1b[94m';
-export let cyan = '\x1b[96m';
+let ori = '\x1b[0m';
+let red = '\x1b[91m';
+let green = '\x1b[92m';
+let yellow = '\x1b[93m';
+let blue = '\x1b[94m';
+let cyan = '\x1b[96m';
 
-export let prefix = '>_ ';
+let prefix = '>_ ';
 
 // Anth Dev
-export function anthdev() {
+function anthdev() {
   console.log('\n\x1b[38;2;255;20;147m');
   console.log(' █████  ███    ██ ████████ ██   ██    ██████  ███████ ██    ██');
   console.log('██   ██ ████   ██    ██    ██   ██    ██   ██ ██      ██    ██');
@@ -41,7 +41,7 @@ export function anthdev() {
  * Parameter: [string], [string/string array]
  * Return: Output to console
  */
-export function print(type, data) {
+function print(type, data) {
   let str = '';
   if (Array.isArray(data)) {
     data.forEach(function(element) {
@@ -73,4 +73,17 @@ export function print(type, data) {
     default:
       console.log(type + prefix, str, ori);
   }
+}
+
+module.exports = {
+  pink: pink,
+  ori: ori,
+  red: red,
+  green: green,
+  yellow: yellow,
+  blue: blue,
+  cyan: cyan,
+  prefix: prefix,
+  anthdev: anthdev,
+  print: print
 }
