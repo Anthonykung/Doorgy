@@ -47,7 +47,7 @@ LED_PWR.writeSync(0);
 LED_PWR.writeSync(0);
 
 // Turn on power indicator
-LED_PWR.writeSync(0);
+LED_PWR.writeSync(1);
 
 // Define Interial IR Function
 IR_INT.watch((err, value) => {
