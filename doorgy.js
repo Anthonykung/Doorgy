@@ -13,6 +13,11 @@
 const gpio = require('onoff').Gpio;
 const dns = require('dns');
 const fs = require('fs');
+const anth = require('./anthonian.js');
+const { exec, spawn } = require('child_process');
+
+anth.anthdev();
+anth.print('msg', 'Starting Doorgy Service');
 
 // Define Global Constant
 const server = 'doorgy.anth.dev';
@@ -20,27 +25,19 @@ const server = 'doorgy.anth.dev';
 // Define Global Variable
 let ctrlSig = 1;
 
-// Check Status
-if (gpio.accessible) {
-  // Define IR gpio
-  var IR_INT = new gpio(5, 'in', 'both');
-  var IR_EXT = new gpio(6, 'in', 'both');
-  var PSH_BTN = new gpio(20, 'in', 'both');
+// Define IR gpio
+const IR_INT = new gpio(5, 'in', 'both');
+const IR_EXT = new gpio(6, 'in', 'both');
+const PSH_BTN = new gpio(20, 'in', 'both');
 
-  // Define LED gpio
-  var LED_PWR = new gpio(12, 'out');
-  var LED_NET = new gpio(13, 'out');
-  var LED_LCK = new gpio(16, 'out');
-  var LED_ERR = new gpio(19, 'out');
+// Define LED gpio
+const LED_PWR = new gpio(12, 'out');
+const LED_NET = new gpio(13, 'out');
+const LED_LCK = new gpio(16, 'out');
+const LED_ERR = new gpio(19, 'out');
 
-  // var in JS has global scope
-
-  // Turn on power indicator
-  LED_PWR.writeSync(1);
-} else {
-  // If error occured turn on Error indicator
-  LED_ERR.writeSync(1);
-}
+// Turn on power indicator
+LED_PWR.writeSync(1);
 
 // Define Interial IR Function
 IR_INT.watch((err, value) => {
@@ -62,6 +59,26 @@ IR_EXT.watch((err, value) => {
   }
   else if (value) {
     // Inform Servo Unit montion is detected
+  }
+  else {
+    // Inform Servo Unit no motion is detected
+  }
+});
+
+// Define Shutdown Function
+PSH_BTN.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    ctrlSig = 0;
+    let cmd = spawn('halt', [], { stdio: 'inherit' });
+    cmd.on('error', (error) => {
+      console.log(anth.red, 'ACLI Error:', error, anth.ori);
+    });
+    cmd.on('close', (code)=>{
+      console.log(anth.blue, 'ACLI Return:', code, anth.ori);
+    });
   }
   else {
     // Inform Servo Unit no motion is detected
