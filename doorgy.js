@@ -26,15 +26,15 @@ const server = 'doorgy.anth.dev';
 let ctrlSig = 1;
 
 // Define IR gpio
-const IR_INT = new gpio(29, 'in', 'both');
-const IR_EXT = new gpio(31, 'in', 'both');
-const PSH_BTN = new gpio(38, 'in', 'both');
+const IR_INT = new gpio(5, 'in', 'both');
+const IR_EXT = new gpio(6, 'in', 'both');
+const PSH_BTN = new gpio(20, 'in', 'both');
 
 // Define LED gpio
-const LED_PWR = new gpio(32, 'out');
-const LED_NET = new gpio(33, 'out');
-const LED_LCK = new gpio(36, 'out');
-const LED_ERR = new gpio(35, 'out');
+const LED_PWR = new gpio(12, 'out');
+const LED_NET = new gpio(13, 'out');
+const LED_LCK = new gpio(16, 'out');
+const LED_ERR = new gpio(19, 'out');
 
 // Turn on power indicator
 LED_PWR.writeSync(1);
