@@ -1,0 +1,39 @@
+{
+  "name": "Doorgy",
+  "version": "1.0.0",
+  "description": "A smart pet door for your smart home",
+  "main": "doorgy.js",
+  "scripts": {
+    "install": "node resources/installer.js",
+    "start": "node doorgy.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anthonykung/Doorgy"
+  },
+  "keywords": [
+    "Doorgy",
+    "Pet Door",
+    "Smart Home",
+    "Smart Pet Door",
+    "Alexa",
+    "Raspberry Pi"
+  ],
+  "author": {
+    "name": "Anthony Kung",
+    "email": "hi@anth.dev",
+    "url": "https://anth.dev"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Anthonykung/Doorgy/issues",
+    "email": "bugs@anth.dev"
+  },
+  "homepage": "https://github.com/Anthonykung/Doorgy#readme",
+  "dependencies": {
+    "cp": "^0.2.0",
+    "mv": "^2.1.1",
+    "onoff": "^6.0.3"
+  }
+}
