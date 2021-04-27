@@ -13,7 +13,7 @@
 const gpio = require('onoff').Gpio;
 const dns = require('dns');
 const fs = require('fs');
-const anth = require('./anthonian.js');
+const anth = require('./resources/anthonian.js');
 const { exec, spawn } = require('child_process');
 
 anth.anthdev();
@@ -72,7 +72,7 @@ PSH_BTN.watch((err, value) => {
   }
   else if (value) {
     ctrlSig = 0;
-    let cmd = spawn('halt', [], { stdio: 'inherit' });
+    let cmd = spawn('shutdown -h now', [], { stdio: 'inherit' });
     cmd.on('error', (error) => {
       console.log(anth.red, 'ACLI Error:', error, anth.ori);
     });
