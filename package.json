@@ -1,6 +1,6 @@
 {
   "name": "doorgy",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A smart pet door for your smart home",
   "main": "doorgy.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Anthonykung/Doorgy"
+    "url": "git://github.com/Anthonykung/Doorgy"
   },
   "keywords": [
     "Doorgy",
