@@ -21,6 +21,7 @@ This is an open source academic group project for ECE 342 Junior Design at Orego
   - [Install](#install)
     - [Physical Installation](#physical-installation)
     - [System Configuration](#system-configuration)
+  - [License](#license)
 
 ## Overview
 
@@ -119,3 +120,13 @@ This assume you have the Doorgy Installation Package and met all the prerequisit
 4. Finish configuring Doorgy with the app
 5. Once configuration is complete, follow the display to restart Doorgy (this is only needed during initial system configuration)
 6. Enjoy your awesome new smart pet door!
+
+## License
+
+Copyright 2021 Doorgy Project Group
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
