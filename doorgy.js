@@ -11,7 +11,6 @@
 
 // Include Packages
 const gpio = require('onoff').Gpio;
-const dns = require('dns');
 const fs = require('fs');
 const anth = require('./resources/anthonian.js');
 const { execSync, spawn } = require('child_process');
@@ -25,6 +24,7 @@ const server = 'doorgy.anth.dev';
 
 // Define Global Variable
 let ctrlSig = 1;
+let printNum = 0;
 
 // Define IR gpio
 const IR_INT = new gpio(5, 'in', 'both');
@@ -84,11 +84,6 @@ IR_EXT.watch((err, value) => {
   }
 });
 
-function turnOffRed() {
-  console.log('Lock Release');
-  LED_LCK.writeSync(0);
-}
-
 // Simulate Lock On
 PSH_BTN2.watch((err, value) => {
   if (err) {
@@ -98,7 +93,10 @@ PSH_BTN2.watch((err, value) => {
     // Turn on Lock indicator
     console.log('Lock Sense', value);
     LED_LCK.writeSync(1);
-    setTimeout(turnOffRed, 2000);
+    setTimeout(() => {
+      console.log('Lock Release');
+      LED_LCK.writeSync(0);
+    }, 2000);
   }
   else {
     // Turn off Lock indicator
@@ -122,17 +120,31 @@ PSH_BTN3.watch((err, value) => {
   }
 });
 
-// Free Resources If Termination Requested
-/*process.on('SIGINT', _ => {
-  ctrlSig = 0;
+function clean() {
+  clearInterval(netCheck);
+  LED_PWR.writeSync(1);
+  LED_NET.writeSync(0);
+  LED_LCK.writeSync(0);
+  LED_ERR.writeSync(0);
   IR_INT.unexport();
   IR_EXT.unexport();
   LED_PWR.unexport();
   LED_NET.unexport();
   LED_LCK.unexport();
   LED_ERR.unexport();
-  exit(0);
-});*/
+}
+
+// Free Resources If Interrupted
+process.on('SIGINT', () => {
+  clean();
+  process.exit(0);
+});
+
+// Free Resources If Termination Requested
+process.on('SIGTERM', () => {
+  clean();
+  process.exit(0);
+});
 
 // Listern for Locking Mechnism
 // Child Process Method
@@ -150,11 +162,9 @@ process.on('message', message => {
 
 anth.print('msg', 'Starting Operation');
 
-let printNum = 0;
-
 function checkNetwork() {
   let  options = {
-    host: 'doorgy.anth.dev',
+    host: server,
     path: '/'
   };
   http.get(options, (res) => {
@@ -179,18 +189,7 @@ PSH_BTN1.watch((err, value) => {
     throw err;
   }
   else if (value) {
-    ctrlSig = 0;
-    clearInterval(netCheck);
-    LED_PWR.writeSync(1);
-    LED_NET.writeSync(0);
-    LED_LCK.writeSync(0);
-    LED_ERR.writeSync(0);
-    IR_INT.unexport();
-    IR_EXT.unexport();
-    LED_PWR.unexport();
-    LED_NET.unexport();
-    LED_LCK.unexport();
-    LED_ERR.unexport();
+    clean();
     let cmd = execSync('shutdown -h now');
   }
   else {

@@ -62,36 +62,45 @@ The 5mm LEDs are used to indicate the condition of the system. A green LED indic
  ****************************************/
 
 // Include Packages
-const GPIO = require('onoff').Gpio;
-const DNS = require('dns');
-const FS = require('fs');
+const gpio = require('onoff').Gpio;
+const fs = require('fs');
+const anth = require('./resources/anthonian.js');
+const { execSync, spawn } = require('child_process');
+const http = require('http');
+
+anth.anthdev();
+anth.print('msg', 'Starting Doorgy Service');
 
 // Define Global Constant
 const server = 'doorgy.anth.dev';
 
 // Define Global Variable
 let ctrlSig = 1;
+let printNum = 0;
 
-// Check Status
-if (GPIO.accessible) {
-  // Define IR GPIO
-  var IR_INT = new GPIO(5, 'in', 'both');
-  var IR_EXT = new GPIO(6, 'in', 'both');
+// Define IR gpio
+const IR_INT = new gpio(5, 'in', 'both');
+const IR_EXT = new gpio(6, 'in', 'both');
 
-  // Define LED GPIO
-  var LED_PWR = new GPIO(12, 'out');
-  var LED_NET = new GPIO(13, 'out');
-  var LED_LCK = new GPIO(16, 'out');
-  var LED_ERR = new GPIO(19, 'out');
+// Define Buttons
+const PSH_BTN1 = new gpio(20, 'in', 'rising', {debounceTimeout: 100});
+const PSH_BTN2 = new gpio(21, 'in', 'rising', {debounceTimeout: 100});
+const PSH_BTN3 = new gpio(26, 'in', 'rising', {debounceTimeout: 100});
 
-  // var in JS has global scope
+// Define LED gpio
+const LED_PWR = new gpio(12, 'out');
+const LED_NET = new gpio(13, 'out');
+const LED_LCK = new gpio(16, 'out');
+const LED_ERR = new gpio(19, 'out');
 
-  // Turn on power indicator
-  LED_PWR.writeSync(1);
-} else {
-  // If error occured turn on Error indicator
-  LED_ERR.writeSync(1);
-}
+anth.print('suc', 'GPIO Defined');
+LED_PWR.writeSync(0);
+LED_NET.writeSync(0);
+LED_LCK.writeSync(0);
+LED_ERR.writeSync(0);
+
+// Turn on power indicator
+LED_PWR.writeSync(1);
 
 // Define Interial IR Function
 IR_INT.watch((err, value) => {
@@ -100,9 +109,13 @@ IR_INT.watch((err, value) => {
   }
   else if (value) {
     // Inform Servo Unit montion is detected
+    console.log('IR_INT Sense', value);
+    LED_ERR.writeSync(1);
   }
   else {
     // Inform Servo Unit no motion is detected
+    console.log('IR_INT Not Sense', value);
+    LED_ERR.writeSync(0);
   }
 });
 
@@ -113,20 +126,76 @@ IR_EXT.watch((err, value) => {
   }
   else if (value) {
     // Inform Servo Unit montion is detected
+    console.log('IR_EXT Sense', value);
+    LED_ERR.writeSync(1);
   }
   else {
     // Inform Servo Unit no motion is detected
+    console.log('IR_EXT Not Sense', value);
+    LED_ERR.writeSync(0);
   }
 });
 
-// Free Resources If Termination Requested
-process.on('SIGINT', _ => {
+// Simulate Lock On
+PSH_BTN2.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    // Turn on Lock indicator
+    console.log('Lock Sense', value);
+    LED_LCK.writeSync(1);
+    setTimeout(() => {
+      console.log('Lock Release');
+      LED_LCK.writeSync(0);
+    }, 2000);
+  }
+  else {
+    // Turn off Lock indicator
+    console.log('Lock Not Sense', value);
+    LED_LCK.writeSync(0);
+  }
+});
+
+// Simulate Error
+PSH_BTN3.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    // Turn on Lock indicator
+    LED_ERR.writeSync(1);
+  }
+  else {
+    // Turn off Lock indicator
+    LED_ERR.writeSync(0);
+  }
+});
+
+function clean() {
+  clearInterval(netCheck);
+  LED_PWR.writeSync(1);
+  LED_NET.writeSync(0);
+  LED_LCK.writeSync(0);
+  LED_ERR.writeSync(0);
   IR_INT.unexport();
   IR_EXT.unexport();
   LED_PWR.unexport();
   LED_NET.unexport();
   LED_LCK.unexport();
   LED_ERR.unexport();
+}
+
+// Free Resources If Interrupted
+process.on('SIGINT', () => {
+  clean();
+  process.exit(0);
+});
+
+// Free Resources If Termination Requested
+process.on('SIGTERM', () => {
+  clean();
+  process.exit(0);
 });
 
 // Listern for Locking Mechnism
@@ -143,42 +212,42 @@ process.on('message', message => {
   }
 });
 
-// Listern for Locking Mechnism
-// Read File Method
-while (ctrlSig) {
-  fs.readFile('doorgy.json', function(err, data) {
-    let comm = JSON.parse(data);
-    if (comm.Lock.status == 1) {
-      // Turn on Lock indicator
-      LED_LCK.writeSync(1);
+anth.print('msg', 'Starting Operation');
+
+function checkNetwork() {
+  let  options = {
+    host: server,
+    path: '/'
+  };
+  http.get(options, (res) => {
+    if (!printNum) {
+      anth.print('suc', 'Connection Established');
+      printNum++;
     }
-    else {
-      // Turn off Lock indicator
-      LED_LCK.writeSync(0);
-    }
+    LED_NET.writeSync(1);
+  }).on('error', function(error) {
+    console.error('Error Detected:', error);
+    LED_NET.writeSync(0);
+    LED_ERR.writeSync(1);
+    anth.print('err', 'Unable to communicate with server');
   });
 }
 
-// Begin Continuous Operation
-while (ctrlSig) {
+let netCheck = setInterval(checkNetwork, 100);
 
-  // Check For Network Connection
-  DNS.resolve(server, function(err) {
-    if (err) {
-      // Turn off Network indicator
-      LED_NET.writeSync(0);
-
-      // Note: Doorgy is designed to operate even when network
-      // connection has been disconnected, so there is no need
-      // to turn on Error indicator
-    } else {
-      // Turn on Network indicator if connection to server
-      // is established
-      LED_NET.writeSync(1);
-    }
-  });
-}
-
+// Define Shutdown Function
+PSH_BTN1.watch((err, value) => {
+  if (err) {
+    throw err;
+  }
+  else if (value) {
+    clean();
+    let cmd = execSync('shutdown -h now');
+  }
+  else {
+    // Inform Servo Unit no motion is detected
+  }
+});
 ```
 
 ## Block Diagrams
@@ -207,4 +276,16 @@ while (ctrlSig) {
 
 ## Bill of Material
 
-![Bill of Materials](./Bill-of-Material-3.PNG)
+| Part                | Value                       | Device                      | Package       | Description              | CATEGORY PROD_ID    | SF_ID     | SUB-CATEGORY |
+| ------------------- | --------------------------- | --------------------------- | ------------- | ------------------------ | ------------------- |---------- | ------------ |
+| IR_EXT              | HC-SR501                    | HC-SR501                    | HC-SR501      | PIR Device               |                     |           |              |
+| IR_INT              | HC-SR501                    | HC-SR501                    | HC-SR501      | PIR Device               |                     |           |              |
+| LED_ERR             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
+| LED_LCK             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
+| LED_NET             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
+| LED_PWR             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
+| R1                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
+| R2                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
+| R3                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
+| R4                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
+| RASPBERRYPI-ZERO-WH | RASPBERRYPI-40-PIN-GPIO_PTH | RASPBERRYPI-40-PIN-GPIO_PTH | 2X20_SHROUDED | Raspberry Pi GPIO Header |          CONN-12263 | PRT-13054 |              |
