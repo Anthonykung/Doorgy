@@ -2,7 +2,7 @@
 
 A smart pet door for your smart home
 
-Currently Under Development
+***APLHA RELEASE WARNING*** Currently Under Development - This is not production ready!
 
 Estimated Time of Completion: May 28, 2021
 
