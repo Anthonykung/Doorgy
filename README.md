@@ -8,6 +8,24 @@ Estimated Time of Completion: May 28, 2021
 
 This is an open source academic group project for ECE 342 Junior Design at Oregon State University.
 
+# Contents
+- [Doorgy](#doorgy)
+- [Contents](#contents)
+  - [Overview](#overview)
+  - [Prerequisite](#prerequisite)
+    - [Doorgy Installation Package](#doorgy-installation-package)
+    - [Required Software](#required-software)
+    - [Configuring Doorgy Service](#configuring-doorgy-service)
+      - [From GitHub](#from-github)
+      - [From NPM](#from-npm)
+  - [Install](#install)
+    - [Physical Installation](#physical-installation)
+    - [System Configuration](#system-configuration)
+
+## Overview
+
+Doorgy is a smart pet door for your smart home. Control your pet door with nothing but your phone! Automated pet detection and door opening, say open sesame. Plug and play, no code required!
+
 ## Prerequisite
 
 This project requires the Doorgy Installation Package that comes with the specific components require for the installation. Schematics of these components are available should you choose to create your own. You will not be able to proceed without these components.
