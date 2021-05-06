@@ -1,6 +1,6 @@
 {
   "name": "doorgy",
-  "version": "1.2.5",
+  "version": "1.2.7",
   "description": "A smart pet door for your smart home",
   "main": "doorgy.js",
   "scripts": {

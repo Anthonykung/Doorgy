@@ -16,7 +16,9 @@ BOM and CPL used to construct Doorgy PCB on JLCPCB is also available on this dir
 
 ## Gerber Files
 
-Gerber files of the Doorgy PCB is located at [./Doorgy-PCB_2021-05-04-v32.zip](./Doorgy-PCB_2021-05-04-v32.zip)
+Current version: v33
+
+Gerber files of the Doorgy PCB is located at [./Doorgy-PCB_2021-05-04-v33.zip](./Doorgy-PCB_2021-05-04-v33.zip)
 
 ## BOM
 

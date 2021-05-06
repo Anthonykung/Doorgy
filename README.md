@@ -31,6 +31,14 @@ Doorgy is a smart pet door for your smart home. Control your pet door with nothi
 
 This project requires the Doorgy Installation Package that comes with the specific components require for the installation. Schematics of these components are available should you choose to create your own. You will not be able to proceed without these components.
 
+Doorgy is part of the Doorgy Project, all parts of Doorgy Project are required to operate.
+
+| Project       | Registry                                                                     | Repository                                                                                   |
+| ------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Doorgy        | [https://www.npmjs.com/package/doorgy](https://www.npmjs.com/package/doorgy) | [https://github.com/Anthonykung/Doorgy](https://github.com/Anthonykung/Doorgy)               |
+| Doorgy Server |                                                                              | [https://github.com/Anthonykung/Doorgy-Server](https://github.com/Anthonykung/Doorgy-Server) |
+| Doorgy App    |                                                                              | [https://github.com/Anthonykung/Doorgy-App](https://github.com/Anthonykung/Doorgy-App)       |
+
 ### Doorgy Installation Package
 
 - 1x Doorgy Printed Circuit Board
