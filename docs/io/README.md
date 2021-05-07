@@ -382,16 +382,4 @@ WantedBy=multi-user.target
 
 ## Bill of Material
 
-| Part                | Value                       | Device                      | Package       | Description              | CATEGORY PROD_ID    | SF_ID     | SUB-CATEGORY |
-| ------------------- | --------------------------- | --------------------------- | ------------- | ------------------------ | ------------------- |---------- | ------------ |
-| IR_EXT              | HC-SR501                    | HC-SR501                    | HC-SR501      | PIR Device               |                     |           |              |
-| IR_INT              | HC-SR501                    | HC-SR501                    | HC-SR501      | PIR Device               |                     |           |              |
-| LED_ERR             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
-| LED_LCK             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
-| LED_NET             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
-| LED_PWR             |                             | LED5MM                      | LED5MM        | LED                      |                     |           |              |
-| R1                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
-| R2                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
-| R3                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
-| R4                  | 250                         | R-US_CHIP-0805(2012-METRIC) | RESC2012X65   | Resistor Fixed - ANSI    | Resistor            |           | Fixed        |
-| RASPBERRYPI-ZERO-WH | RASPBERRYPI-40-PIN-GPIO_PTH | RASPBERRYPI-40-PIN-GPIO_PTH | 2X20_SHROUDED | Raspberry Pi GPIO Header |          CONN-12263 | PRT-13054 |              |
+![BOM](./BOM.png)
