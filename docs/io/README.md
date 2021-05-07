@@ -1,6 +1,6 @@
 # ECE 342 Pet Door Project - Doorgy
 
-Doorgy - Smart Pet Door for your home, connected right to your phone. Hidden suprise included.
+Doorgy - Smart Pet Door for your home, connected right to your phone. Hidden surprise included.
 
 Created by Anthony Kung <hi@anth.dev> (https://anth.dev)
 
@@ -15,6 +15,12 @@ Created by Anthony Kung <hi@anth.dev> (https://anth.dev)
     - [HC-SR501](#hc-sr501)
     - [5mm LED](#5mm-led)
   - [Code](#code)
+    - [Structure](#structure)
+      - [Entire Service Package](#entire-service-package)
+      - [Service File](#service-file)
+    - [Primary Program Executable](#primary-program-executable)
+    - [Installer](#installer)
+    - [Service Scheduler](#service-scheduler)
   - [Block Diagrams](#block-diagrams)
     - [Black Box Diagram](#black-box-diagram)
     - [Block Diagram](#block-diagram)
@@ -25,9 +31,9 @@ Created by Anthony Kung <hi@anth.dev> (https://anth.dev)
 
 This portion of the project includes IR motion sensors and 5mm LEDs.
 
-The IR sensors (HC-SR501) is used to detect pet movements from inside and outside the door. The IR sensor will be used to send control signal to a single board computer (Raspberry Pi Zero WH) to be processed and activate the servo motors to open the door.
+The IR sensors (HC-SR501) are used to detect pet movements from inside and outside the door. The IR sensor will be used to send the control signal to a single board computer (Raspberry Pi Zero WH) to be processed and activate the servo motors to open the door.
 
-The 5mm LEDs are used to indicate the condition of the system. A green LED indicate the system is operating with sufficient power. A blue LED is used to indicate network connectivity. A red LED is used to indicate if the door has been locked. And a yellow LED is used to report errors. A 5mm LED has a current rating of 20mA, to protect the LED from the Raspberry Pi 5V voltage supply, a 250Ω resistor is require for each of them. This value is calculated by the formula ***V = IR*** where the resistor value can be found by dividing the voltage (5V) by the current (20mA) which gives 250Ω.
+The 5mm LEDs are used to indicate the condition of the system. A green LED indicates the system is operating with sufficient power. A blue LED is used to indicate network connectivity. A red LED is used to indicate if the door has been locked. And a yellow LED is used to report errors. A 5mm LED has a current rating of 20mA, to protect the LED from the Raspberry Pi 5V voltage supply, a 250Ω resistor is required for each of them. This value is calculated by the formula ***V = IR*** where the resistor value can be found by dividing the voltage (5V) by the current (20mA) which gives 250Ω.
 
 ## Schematic
 
@@ -48,6 +54,31 @@ The 5mm LEDs are used to indicate the condition of the system. A green LED indic
 ![5mm LED](./5mm-LED.webp)
 
 ## Code
+
+### Structure
+
+#### Entire Service Package
+
+```
+/usr/local/src/
+├── README.md
+├── doorgy.js
+├── package.json
+└── resources/
+    ├── installer.js
+    ├── doorgy.service
+    ├── doorgy-init.sh
+    └── anthonian.js
+```
+
+#### Service File
+
+```
+/etc/systemd/services/
+└── doorgy.service
+```
+
+### Primary Program Executable
 
 ```javascript
 /****************************************
@@ -248,6 +279,81 @@ PSH_BTN1.watch((err, value) => {
     // Inform Servo Unit no motion is detected
   }
 });
+```
+
+### Installer
+
+```js
+#!/usr/bin/env node
+
+/*******************************************
+ *                                         *
+ * Name: installer.js                      *
+ * Description: Doorgy Installation Helper *
+ * Date: April 26, 2021                    *
+ * Created by: Anthony Kung                *
+ * Author URL: https://anth.dev            *
+ * License: Apache-2.0 (See LICENSE.md)    *
+ *                                         *
+ *******************************************/
+
+// Just to be nice
+'use strict';
+
+// Modules
+const { exec, spawn } = require('child_process');
+const anth = require('./anthonian.js');
+const fs = require("fs");
+const path = require('path');
+const fse = require('fs-extra');
+
+anth.print('msg', 'Checking Directory Location');
+
+if (__dirname != '/usr/local/src/doorgy') {
+  anth.print('msg', 'Relocation required, relocating...');
+  try {
+    fse.copySync(__dirname + '/../', '/usr/local/src/doorgy');
+    anth.print('suc', 'Relocation Success');
+  } catch (err) {
+    anth.print('err', 'Unable to move directory');
+  }
+}
+anth.print('suc', 'Directory Check Completed');
+
+anth.print('msg', 'Checking Service Location');
+
+if (!fs.existsSync('/etc/systemd/system/doorgy.service')) {
+  anth.print('msg', 'Service not found, adding service...');
+  try {
+    fse.copySync(path.join(__dirname, 'doorgy.service'), '/etc/systemd/system/doorgy.service');
+    anth.print('suc', 'Service Added Successfully');
+  } catch (err) {
+    anth.print('err', 'Unable to move file');
+  }
+}
+anth.print('suc', 'Service Check Completed');
+
+anth.print('suc', 'Doorgy Installation Completed');
+anth.print('msg', ['Start the service using', anth.pink, 'sudo npm start', anth.blue, 'or', anth.pink, 'sudo systemctl start doorgy.service', anth.blue, 'sudo is required for system services']);
+```
+
+### Service Scheduler
+
+```
+[Unit]
+Description=Doorgy Service Agent
+Documentation=https://github.com/Anthonykung/Doorgy
+
+[Service]
+ExecStart=/usr/bin/node /usr/local/src/doorgy/doorgy.js
+WorkingDirectory=/usr/local/src/doorgy
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 ## Block Diagrams
