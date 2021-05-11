@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
-/*******************************************
- *                                         *
- * Name: installer.js                      *
- * Description: Doorgy Installation Helper *
- * Date: April 26, 2021                    *
- * Created by: Anthony Kung                *
- * Author URL: https://anth.dev            *
- * License: Apache-2.0 (See LICENSE.md)    *
- *                                         *
- *******************************************/
+/**
+ *
+ * @description Doorgy Installation Helper.
+ * @file        installer.js
+ * @link        https://doorgy.anth.dev
+ * @license     Apache-2.0
+ * @author      Anthony Kung <hi@anth.dev>
+ * @since       1.0.0
+ * @version     1.2.8
+ *
+ */
 
 // Just to be nice
 'use strict';

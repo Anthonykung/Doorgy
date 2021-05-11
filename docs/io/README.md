@@ -81,16 +81,17 @@ The 5mm LEDs are used to indicate the condition of the system. A green LED indic
 ### Primary Program Executable
 
 ```javascript
-/****************************************
- *                                      *
- * Name: doorgy.js                      *
- * Description: Doorgy - Smart Pet Door *
- * Date: April 16, 2021                 *
- * Created by: Anthony Kung             *
- * Author URL: https://anth.dev         *
- * License: Apache-2.0 (See LICENSE.md) *
- *                                      *
- ****************************************/
+/**
+ *
+ * @description Doorgy - Smart Pet Door.
+ * @file        doorgy.js
+ * @link        https://doorgy.anth.dev
+ * @license     Apache-2.0
+ * @author      Anthony Kung <hi@anth.dev>
+ * @since       1.0.0
+ * @version     1.2.8
+ *
+ */
 
 // Include Packages
 const gpio = require('onoff').Gpio;
@@ -114,7 +115,7 @@ const IR_INT = new gpio(5, 'in', 'both');
 const IR_EXT = new gpio(6, 'in', 'both');
 
 // Define Buttons
-const PSH_BTN1 = new gpio(20, 'in', 'rising', {debounceTimeout: 100});
+const KILL = new gpio(20, 'in', 'rising', {debounceTimeout: 100});
 const PSH_BTN2 = new gpio(21, 'in', 'rising', {debounceTimeout: 100});
 const PSH_BTN3 = new gpio(26, 'in', 'rising', {debounceTimeout: 100});
 
@@ -133,7 +134,15 @@ LED_ERR.writeSync(0);
 // Turn on power indicator
 LED_PWR.writeSync(1);
 
-// Define Interial IR Function
+/**
+ * Interial IR Function.
+ *
+ * @access private
+ * @param  {*} err
+ * @param  {*} value
+ *
+ * @memberof IR_INT
+ */
 IR_INT.watch((err, value) => {
   if (err) {
     throw err;
@@ -150,7 +159,15 @@ IR_INT.watch((err, value) => {
   }
 });
 
-// Define Interial IR Function
+/**
+ * Exterial IR Function.
+ *
+ * @access private
+ * @param  {*} err
+ * @param  {*} value
+ *
+ * @memberof IR_EXT
+ */
 IR_EXT.watch((err, value) => {
   if (err) {
     throw err;
@@ -167,7 +184,15 @@ IR_EXT.watch((err, value) => {
   }
 });
 
-// Simulate Lock On
+/**
+ * LED_LCK Test Function.
+ *
+ * @access private
+ * @param  {*} err
+ * @param  {*} value
+ *
+ * @memberof PSH_BTN2
+ */
 PSH_BTN2.watch((err, value) => {
   if (err) {
     throw err;
@@ -188,7 +213,15 @@ PSH_BTN2.watch((err, value) => {
   }
 });
 
-// Simulate Error
+/**
+ * LED_ERR Test Function.
+ *
+ * @access private
+ * @param  {*} err
+ * @param  {*} value
+ *
+ * @memberof PSH_BTN3
+ */
 PSH_BTN3.watch((err, value) => {
   if (err) {
     throw err;
@@ -203,6 +236,14 @@ PSH_BTN3.watch((err, value) => {
   }
 });
 
+/**
+ * Termination Cleanup Function.
+ *
+ * @name   clean
+ * @access private
+ * @param  {*} err
+ * @param  {*} value
+ */
 function clean() {
   clearInterval(netCheck);
   LED_PWR.writeSync(1);
@@ -217,20 +258,43 @@ function clean() {
   LED_ERR.unexport();
 }
 
-// Free Resources If Interrupted
+/**
+ * Interruption Control.
+ *
+ * Free resources and exit if interrupted.
+ *
+ * @listens SIGINT
+ * @access private
+ * @memberof process
+ */
 process.on('SIGINT', () => {
   clean();
   process.exit(0);
 });
 
-// Free Resources If Termination Requested
+/**
+ * Termination Control.
+ *
+ * Free resources and exit if terminated.
+ *
+ * @listens SIGTERM
+ * @access private
+ * @memberof process
+ */
 process.on('SIGTERM', () => {
   clean();
   process.exit(0);
 });
 
-// Listern for Locking Mechnism
-// Child Process Method
+/**
+ * Locking Control.
+ *
+ * Listern for Locking Mechnism.
+ *
+ * @listens message
+ * @access private
+ * @memberof process
+ */
 process.on('message', message => {
   let comm = JSON.parse(message);
   if (comm.Lock.status == 1) {
@@ -245,7 +309,16 @@ process.on('message', message => {
 
 anth.print('msg', 'Starting Operation');
 
-function checkNetwork() {
+/**
+ * Network Check Function.
+ *
+ * Check for network connection.
+ *
+ * @name   checkNetwork
+ * @access private
+ * @param  {string} server
+ */
+function checkNetwork(server) {
   let  options = {
     host: server,
     path: '/'
@@ -264,10 +337,20 @@ function checkNetwork() {
   });
 }
 
-let netCheck = setInterval(checkNetwork, 100);
+let netCheck = setInterval(checkNetwork(server), 100);
 
-// Define Shutdown Function
-PSH_BTN1.watch((err, value) => {
+/**
+ * Kill Function.
+ *
+ * Initiate graceful shutdown
+ *
+ * @access private
+ * @param  {*} err
+ * @param  {*} value
+ *
+ * @memberof KILL
+ */
+KILL.watch((err, value) => {
   if (err) {
     throw err;
   }
@@ -276,7 +359,9 @@ PSH_BTN1.watch((err, value) => {
     let cmd = execSync('shutdown -h now');
   }
   else {
-    // Inform Servo Unit no motion is detected
+    console.error('Error Detected:', error);
+    LED_ERR.writeSync(1);
+    anth.print('err', 'Unable to shutdown the server');
   }
 });
 ```
@@ -366,19 +451,19 @@ WantedBy=multi-user.target
 
 ## Interface Definition
 
-| Name | Type | Definition |
-| ---- | ---- | ---------- |
-| BAT_PWR | DC Power | <ul><li>Voltage: 5.1V</li><li>Current: 1.2A</li></ul> |
-| USB_PWR | DC Power | <ul><li>Voltage: 5.1V</li><li>Current: 1.2A</li></ul> |
-| POWER | DC Power | <ul><li>Voltage: 5.0V</li><li>Current: 1.2A</li></ul> |
-| IR_INT | Analog Signal | <ul><li>Voltage: DC 5V</li><li>Minimium Range: 1m</li></ul> |
-| IR_EXT | Analog Signal | <ul><li>Voltage: DC 5V</li><li>Minimium Range: 1m</li></ul> |
-| COMM_IN | Data | Format: JSON Object |
-| COMM_OUT | Data | Format: JSON Object |
-| LED_PWR | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul> |
-| LED_NET | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul> |
-| LED_LCK | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul> |
-| LED_ERR | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul> |
+| Name     | Type          | Definition                                                  |
+| -------- | ------------- | ----------------------------------------------------------- |
+| BAT_PWR  | DC Power      | <ul><li>Voltage: 5.1V</li><li>Current: 1.2A</li></ul>       |
+| USB_PWR  | DC Power      | <ul><li>Voltage: 5.1V</li><li>Current: 1.2A</li></ul>       |
+| POWER    | DC Power      | <ul><li>Voltage: 5.0V</li><li>Current: 1.2A</li></ul>       |
+| IR_INT   | Analog Signal | <ul><li>Voltage: DC 5V</li><li>Minimium Range: 1m</li></ul> |
+| IR_EXT   | Analog Signal | <ul><li>Voltage: DC 5V</li><li>Minimium Range: 1m</li></ul> |
+| COMM_IN  | Data          | Format: JSON Object                                         |
+| COMM_OUT | Data          | Format: JSON Object                                         |
+| LED_PWR  | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul>       |
+| LED_NET  | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul>       |
+| LED_LCK  | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul>       |
+| LED_ERR  | Analog Signal | <ul><li>Voltage: 5.0V</li><li>Current: 20mA</li></ul>       |
 
 ## Bill of Material
 

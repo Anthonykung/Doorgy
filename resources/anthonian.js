@@ -1,13 +1,14 @@
-/*****************************************
- *                                       *
- * Name: anthonian.js                    *
- * Description: Anthonian Helper Program *
- * Date: July 21, 2020                   *
- * Created by: Anthony Kung              *
- * Author URL: https://anth.dev          *
- * License: Apache-2.0 (See LICENSE.md)  *
- *                                       *
- *****************************************/
+/**
+ *
+ * @description Anthonian Helper Program.
+ * @file        anthonian.js
+ * @link        https://doorgy.anth.dev
+ * @license     Apache-2.0
+ * @author      Anthony Kung <hi@anth.dev>
+ * @since       1.0.0
+ * @version     1.2.8
+ *
+ */
 
 // Just to be nice
 'use strict';
