@@ -472,34 +472,4 @@ WantedBy=multi-user.target
 
 ## Bill of Material
 
-![BOM](./BOM.png)
-
-|Designator|Value                      |Footprint                        |Part Number           |Alternate Part Number|MANUFACTURER                |Quantity|Costs   |
-|----------|---------------------------|---------------------------------|----------------------|---------------------|----------------------------|--------|--------|
-|BAT_PWR   |PINHD-1X2                  |CONN_TH_2001R-2P_D               |C155876               |C155876              |Ckmtw(Shenzhen Cankemeng)   |1       |$0.6300 |
-|D1        |SMDJ36A                    |SMC,DO-214AB                     |SMDJ36A               |C108363              |Littelfuse                  |1       |$0.8486 |
-|FUSE      |65800001009                |SMD Fuse Holders RoHS            |65800001009           |C122783              |Littelfuse                  |1       |$1.9850 |
-|IR_EXT    |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|IR_INT    |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|KILL      |PINHD-1X2                  |HDR-TH_2P-P2.54-V                |RE-H022TD-1190(LF)(SN)|C160332              |JST Sales America           |1       |$0.3675 |
-|LED_ARRAY |PINHD-2X8                  |HDR-TH_8P-P2.54-V-R2-C4-S2.54    |A2541HWV-2x4P         |C239344              |CJT(Changjiang Connectors)  |1       |$0.1441 |
-|LM317DCYR |LM317DCYR                  |SOT-223                          |LM317DCYR             |C51466               |Texas Instruments           |1       |$0.7738 |
-|MNG1      |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|MNG2      |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|PWM       |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|R1        |400                        |0805_R                           |TR0805B400RP0525Z     |C153298              |Ever Ohms Tech              |1       |$0.6440 |
-|R2        |1200                       |0805_R                           |0805W8F1201T5E        |C17379               |UNI-ROYAL(Uniroyal Elec)    |1       |$0.0900 |
-|R3        |220                        |0805_R                           |0805W8F2200T5E        |C17557               |UNI-ROYAL(Uniroyal Elec)    |1       |$0.0880 |
-|R4        |220                        |0805_R                           |0805W8F2200T5E        |C17557               |UNI-ROYAL(Uniroyal Elec)    |1       |$0.0880 |
-|R5        |220                        |0805_R                           |0805W8F2200T5E        |C17557               |UNI-ROYAL(Uniroyal Elec)    |1       |$0.0880 |
-|R6        |220                        |0805_R                           |0805W8F2200T5E        |C17557               |UNI-ROYAL(Uniroyal Elec)    |1       |$0.0880 |
-|R7        |0                          |0805_R                           |0805W8F0000T5E        |C17477               |Uniroyal Elec               |1       |$0.0940 |
-|R8        |0                          |0805_R                           |0805W8F0000T5E        |C17477               |Uniroyal Elec               |1       |$0.0940 |
-|RASPI     |RASPBERRYPI-40-PIN-GPIO_PTH|HDR-TH_40P-P2.54-V-M-R2-C20-S2.54|C124383               |C221057              |Ckmtw(Shenzhen Cankemeng)   |1       |$0.0940 |
-|SERVO1    |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|SERVO2    |PINHD-1X3                  |SIP-3_2.5x7.62x2.54P             |C49257                |C49257               |BOOMELE(Boom Precision Elec)|1       |$0.6550 |
-|TP1       |BPO                        |N/A                              |                      |N/A                  |                            |        |        |
-|TP2       |BGN                        |N/A                              |                      |N/A                  |                            |        |        |
-|TP3       |GND                        |N/A                              |                      |N/A                  |                            |        |        |
-|TP4       |PWR                        |N/A                              |                      |N/A                  |                            |        |        |
-|TP5       |BAT_PWR                    |N/A                              |                      |N/A                  |                            |        |        |
+![BOM](./BOM-v2.png)
