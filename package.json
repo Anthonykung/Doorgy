@@ -1,6 +1,6 @@
 {
   "name": "doorgy",
-  "version": "1.2.7",
+  "version": "1.3.0",
   "description": "A smart pet door for your smart home",
   "main": "doorgy.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "url": "https://github.com/Anthonykung/Doorgy/issues",
     "email": "bugs@anth.dev"
   },
-  "homepage": "https://github.com/Anthonykung/Doorgy#readme",
+  "homepage": "https://doorgy.anth.dev",
   "dependencies": {
     "bleno": "^0.5.0",
     "fs-extra": "^9.1.0",
