@@ -1,0 +1,40 @@
+{
+  "version": 0,
+  "username": "Anthonykung",
+  "password": "Not used in Doorgy Service",
+  "token": "Not used in Doorgy App",
+  "wifi": {
+    "country": "US",
+    "ssid": "CoolWiFi",
+    "psk": "password",
+    "id_str": "For future multi network support"
+  },
+  "open": false,
+  "unlock": false,
+  "schedule": [
+    {
+      "day": "Mon",
+      "hour": 8,
+      "minutes": 0,
+      "endHour": 22,
+      "endMinutes": 0
+    },
+    {
+      "day": "Tue",
+      "hour": 20,
+      "minutes": 0,
+      "endHour": 22,
+      "endMinutes": 0
+    }
+  ],
+  "history": [
+    {
+      "event": "open",
+      "time": 1621933341365
+    },
+    {
+      "event": "close",
+      "time": 1621933341365
+    }
+  ]
+}

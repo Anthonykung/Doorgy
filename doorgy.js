@@ -26,6 +26,7 @@ anth.print('msg', 'Starting Doorgy Service');
 // Define Global Constant
 const server = 'doorgy.anth.dev';
 const client = 'DoorgyService';
+const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // Define Global Variable
 let ctrlSig = 1;
@@ -271,22 +272,52 @@ anth.print('msg', 'Starting Operation');
 function checkNetwork(server) {
   let  options = {
     host: server,
-    path: '/api/config'
-  };
-  http.get(options, (res) => {
-    if (!printNum) {
-      // Make sure logs only print onces
-      anth.print('suc', 'Connection Established');
-      printNum++;
+    port: 443,
+    path: '/api/opt',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
     }
-    LED_NET.writeSync(1);
-  }).on('error', function(error) {
-    printNum = 0;  // Reset logs
-    console.error('Error Detected:', error);
+  };
+  https.request(options, (res) => {
+    /**
+     * Communication Function.
+     *
+     * Get data from server
+     *
+     * @access private
+     * @param  {*} err
+     * @param  {*} value
+     *
+     * @memberof KILL
+     */
+    res.on('data', function (data) {
+      LED_NET.writeSync(1);
+      let ctrl = JSON.parse(data);
+      // if updated config is received, update local config
+      if (ctrl.version && ctrl.version > config.version) {
+        config = ctrl;
+        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
+          if (err) {
+            anth.print(err);
+          }
+        });
+      }
+      unlock(ctrl.unlock);
+      open(ctrl.open);
+      setTimeout(open(false), milliseconds);
+    });
+  })
+  .write(JSON.stringify({
+    username: config.username,
+    authToken: config.token
+  }))
+  .on('error', function(err) {
+    console.error('Error Detected:', err);
     LED_NET.writeSync(0);
-    LED_ERR.writeSync(1);
     anth.print('err', 'Unable to communicate with server');
-  });
+  })
+  .end();
 }
 
 let netCheck = setInterval(checkNetwork(server), 100);
@@ -324,15 +355,29 @@ function unlock(bool) {
   }
   else {
     // Else lock
-    SERVO2.servoWrite(1500);
+    SERVO2.servoWrite(2000);
   }
 }
 
 function open(bool) {
   if (bool) {
+    if (config.history.length == 10) {
+      config.history.slice(1, 9);
+    }
+    config.history.push({
+      "event": "open",
+      "time": Date.now()
+    });
     SERVO1.servoWrite(2000);
   }
   else {
+    if (config.history.length == 10) {
+      config.history.slice(1, 9);
+    }
+    config.history.push({
+      "event": "close",
+      "time": Date.now()
+    });
     SERVO1.servoWrite(1500);
   }
 }
@@ -344,64 +389,38 @@ function open(bool) {
  *
  * @name   checkNetwork
  * @access private
- * @param  {string} server
+ * @param  {object} config
  */
-function primary(server) {
-  let  options = {
-    host: server,
-    port: 443,
-    path: '/api/opt',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  };
-  https.request(options, (res) => {
-    /**
-     * Communication Function.
-     *
-     * Get data from server
-     *
-     * @access private
-     * @param  {*} err
-     * @param  {*} value
-     *
-     * @memberof KILL
-     */
-    res.on('data', function (data) {
-      let ctrl = JSON.parse(data);
-      // if updated config is received, update local config
-      if (ctrl.version && ctrl.version > config.version) {
-        config = ctrl;
-        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
-          if (err) {
-            anth.print(err);
-          }
-        });
+function primary(config) {
+  let timeNow = new Date();
+  let day = weekday[timeNow.getDay()];
+  let count = 0;
+  if (!config.open && !config.unlock) {
+    config.schedule.forEach(item => {
+      if ((day == item.day) && (timeNow.getHours() > item.hour) && (timeNow.getMinutes() > item.minutes) && (timeNow.getHours() < item.endHour) && (timeNow.getMinutes() < item.endMinutes)) {
+        unlock(true);
+        count++;
       }
-      unlock(ctrl.unlock);
-      open(ctrl.open);
     });
-  })
-  .write(JSON.stringify({
-    username: config.username,
-    authToken: config.token
-  }))
-  .on('error', function(error) {
-    console.error('Error Detected:', error);
-    LED_NET.writeSync(0);
-    anth.print('err', 'Unable to communicate with server');
-  })
-  .end();
+    if (count == 0) {
+      unlock(false);
+    }
+  }
 }
 
-let primaryOpt = setInterval(primary(server), 100);
+let primaryOpt = setInterval(primary(config), 100);
 
+/**
+ * Bluetooth Function
+ * 
+ * Update WiFi configuration
+ * 
+ * @param {string} country 
+ * @param {string} ssid 
+ * @param {string} psk 
+ * @param {string} id_str 
+ */
 function bluetooth(country, ssid, psk, id_str) {
-  config.wifi.country = country;
-  config.wifi.ssid = ssid;
-  config.wifi.psk = psk;
-  config.wifi.id_str = id_str;
   let wifiConfig = `
   ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
   update_config=1
@@ -445,16 +464,22 @@ bleno.on('advertisingStart', function(err) {
   if (!err) {
     bleno.setServices([
       new bleno.PrimaryService({
-        uuid: 'fff0',
+        uuid: 'ade0',
         characteristics: [
           new bleno.Characteristic({
-            uuid: 'fff1',
+            uuid: 'ade1',
             properties: ['read', 'write'],
             secure: ['read', 'write'],
             value: null,
             onWriteRequest(data, offset, withoutResponse, callback) {
               let req = JSON.parse(data.toString());
-              bluetooth(req.country, req.ssid, req.psk, req.id_str);
+              config = req;
+              fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
+                if (err) {
+                  anth.print(err);
+                }
+              });
+              bluetooth(config.wifi.country, config.wifi.ssid, config.wifi.psk, config.wifi.id_str);
               callback(this.RESULT_SUCCESS);
             },
           }),
