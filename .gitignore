@@ -4,6 +4,7 @@
 
 # Ignore Configuration Files
 config/
+config.json
 
 # Ignore Logs
 logs/

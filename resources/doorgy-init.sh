@@ -16,12 +16,9 @@
 # sudo in front of each command
 
 apt-get update
-apt-get install ufw
+apt-get install ufw fail2ban git nodejs npm mongodb bluetooth bluez libbluetooth-dev libudev-dev -y
 ufw allow ssh
 ufw limit ssh
-apt-get install fail2ban
-apt-get install git -y
-apt-get install nodejs -y
-apt-get install npm -y
-apt-get install mongodb -y
-git clone https://github.com/Anthonykung/Doorgy
+
+# If you need Doorgy Service, uncomment the following
+# npm install doorgy

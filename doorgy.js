@@ -17,16 +17,20 @@ const fs = require('fs');
 const anth = require('./resources/anthonian.js');
 const { execSync, spawn } = require('child_process');
 const http = require('http');
+const bleno = require('bleno');
+const path = require('path');
 
 anth.anthdev();
 anth.print('msg', 'Starting Doorgy Service');
 
 // Define Global Constant
 const server = 'doorgy.anth.dev';
+const client = 'DoorgyService';
 
 // Define Global Variable
 let ctrlSig = 1;
 let printNum = 0;
+let config = {};
 
 // Define IR gpio
 const IR_INT = new gpio(5, 'in', 'both');
@@ -60,6 +64,25 @@ LED_ERR.writeSync(0);
 // Turn on power indicator
 LED_PWR.writeSync(1);
 
+
+/**
+ * Local configuration sync
+ * 
+ * Obtain local configuration file
+ * 
+ * @param {object} config 
+ */
+fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
+  if (!err) {
+    LED_ERR.writeSync(0);
+    config = JSON.parse(data);
+  }
+  else {
+    anth.print('err', err);
+    LED_ERR.writeSync(1);
+  }
+});
+
 /**
  * Interial IR Function.
  *
@@ -76,12 +99,12 @@ IR_INT.watch((err, value) => {
   else if (value) {
     // Inform Servo Unit montion is detected
     console.log('IR_INT Sense', value);
-    LED_ERR.writeSync(1);
+    //LED_ERR.writeSync(1);
   }
   else {
     // Inform Servo Unit no motion is detected
     console.log('IR_INT Not Sense', value);
-    LED_ERR.writeSync(0);
+    //LED_ERR.writeSync(0);
   }
 });
 
@@ -101,12 +124,12 @@ IR_EXT.watch((err, value) => {
   else if (value) {
     // Inform Servo Unit montion is detected
     console.log('IR_EXT Sense', value);
-    LED_ERR.writeSync(1);
+    //LED_ERR.writeSync(1);
   }
   else {
     // Inform Servo Unit no motion is detected
     console.log('IR_EXT Not Sense', value);
-    LED_ERR.writeSync(0);
+    //LED_ERR.writeSync(0);
   }
 });
 
@@ -171,6 +194,7 @@ PSH_BTN3.watch((err, value) => {
  * @param  {*} value
  */
 function clean() {
+  clearInterval(primaryOpt);
   clearInterval(netCheck);
   LED_PWR.writeSync(1);
   LED_NET.writeSync(0);
@@ -247,15 +271,17 @@ anth.print('msg', 'Starting Operation');
 function checkNetwork(server) {
   let  options = {
     host: server,
-    path: '/'
+    path: '/api/config'
   };
   http.get(options, (res) => {
     if (!printNum) {
+      // Make sure logs only print onces
       anth.print('suc', 'Connection Established');
       printNum++;
     }
     LED_NET.writeSync(1);
   }).on('error', function(error) {
+    printNum = 0;  // Reset logs
     console.error('Error Detected:', error);
     LED_NET.writeSync(0);
     LED_ERR.writeSync(1);
@@ -291,6 +317,26 @@ KILL.watch((err, value) => {
   }
 });
 
+function unlock(bool) {
+  if (bool) {
+    // If true unlock
+    SERVO2.servoWrite(1500);
+  }
+  else {
+    // Else lock
+    SERVO2.servoWrite(1500);
+  }
+}
+
+function open(bool) {
+  if (bool) {
+    SERVO1.servoWrite(2000);
+  }
+  else {
+    SERVO1.servoWrite(1500);
+  }
+}
+
 /**
  * Doorgy Operation Function.
  *
@@ -303,10 +349,14 @@ KILL.watch((err, value) => {
 function primary(server) {
   let  options = {
     host: server,
-    path: '/opt',
-    method: 'POST'
+    port: 443,
+    path: '/api/opt',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
   };
-  http.get(options, (res) => {
+  https.request(options, (res) => {
     /**
      * Communication Function.
      *
@@ -320,31 +370,99 @@ function primary(server) {
      */
     res.on('data', function (data) {
       let ctrl = JSON.parse(data);
-      if (ctrl.open) {
-        SERVO1.servoWrite(2000);
+      // if updated config is received, update local config
+      if (ctrl.version && ctrl.version > config.version) {
+        config = ctrl;
+        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
+          if (err) {
+            anth.print(err);
+          }
+        });
       }
-      else {
-        SERVO1.servoWrite(1500);
-      }
-      if (!ctrl.lock) {
-        SERVO2.servoWrite(1500);
-      }
-      else {
-        SERVO2.servoWrite(1500);
-      }
+      unlock(ctrl.unlock);
+      open(ctrl.open);
     });
   })
   .write(JSON.stringify({
-    username: 'Anthonykung',
-    authToken: 'Te3i6Mjy8~lT3uJenKqI0I&dj1cIe53z%1thZPFn*W'
+    username: config.username,
+    authToken: config.token
   }))
   .on('error', function(error) {
     console.error('Error Detected:', error);
     LED_NET.writeSync(0);
-    LED_ERR.writeSync(1);
     anth.print('err', 'Unable to communicate with server');
   })
   .end();
 }
 
 let primaryOpt = setInterval(primary(server), 100);
+
+function bluetooth(country, ssid, psk, id_str) {
+  config.wifi.country = country;
+  config.wifi.ssid = ssid;
+  config.wifi.psk = psk;
+  config.wifi.id_str = id_str;
+  let wifiConfig = `
+  ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+  update_config=1
+  country=${country}
+  network={
+    ssid="${ssid}"
+    psk="${psk}"
+    id_str=${id_str}
+  }
+  `;
+  fs.writeFile("/etc/wpa_supplicant/wpa_supplicant.conf", wifiConfig, function(err) {
+    if (err) {
+      anth.print(err);
+    }
+    else {
+      console.log("Configuration updated, restarting...");
+      clean();
+      let cmd = execSync('shutdown -h now');
+    }
+  });
+}
+
+/**
+ * Bluetooth Controller
+ */
+bleno.on('stateChange', function(state) {
+  let msg = 'bleno state change' + state;
+  anth.print('msg', msg);
+  if (state === 'poweredOn') {
+    bleno.startAdvertising(client, ['1803']);
+  } else {
+    bleno.stopAdvertising;
+  }
+});
+
+/**
+ * Bluetooth Service
+ */
+bleno.on('advertisingStart', function(err) {
+  anth.print('msg', 'bleno advertising start');
+  if (!err) {
+    bleno.setServices([
+      new bleno.PrimaryService({
+        uuid: 'fff0',
+        characteristics: [
+          new bleno.Characteristic({
+            uuid: 'fff1',
+            properties: ['read', 'write'],
+            secure: ['read', 'write'],
+            value: null,
+            onWriteRequest(data, offset, withoutResponse, callback) {
+              let req = JSON.parse(data.toString());
+              bluetooth(req.country, req.ssid, req.psk, req.id_str);
+              callback(this.RESULT_SUCCESS);
+            },
+          }),
+        ],
+      }),
+    ]);
+  }
+  else {
+    anth.print('err', err);
+  }
+});
