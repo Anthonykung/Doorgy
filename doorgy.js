@@ -327,7 +327,7 @@ function checkNetwork(server) {
   req.end();
 }
 
-let netCheck = setInterval(checkNetwork(server), 100);
+let netCheck = setInterval(() => checkNetwork(server), 100);
 
 /**
  * Kill Function.
@@ -460,4 +460,4 @@ function primary(config) {
   }
 }
 
-let primaryOpt = setInterval(primary(config), 100);
+let primaryOpt = setInterval(() => primary(config), 100);
