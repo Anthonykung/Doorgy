@@ -392,6 +392,9 @@ function write() {
 }
 
 function unlock(bool) {
+  if (!config.history) {
+    config.history = [];
+  }
   if (bool) {
     config.history.push({
       "event": "unlock",
@@ -413,6 +416,9 @@ function unlock(bool) {
 }
 
 function open(bool) {
+  if (!config.history) {
+    config.history = [];
+  }
   if (bool) {
     config.history.push({
       "event": "open",
