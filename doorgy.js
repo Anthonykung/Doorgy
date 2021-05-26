@@ -315,10 +315,7 @@ function checkNetwork(server) {
       setTimeout(() => open(false), 5000);
     });
   })
-  req.write(JSON.stringify({
-    username: config.username,
-    authToken: config.token
-  }))
+  req.write(JSON.stringify(config))
   req.on('error', function(err) {
     console.error('Error Detected:', err);
     LED_NET.writeSync(0);
