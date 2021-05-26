@@ -16,7 +16,7 @@
 # sudo in front of each command
 
 apt-get update
-apt-get install ufw fail2ban git nodejs npm mongodb bluetooth bluez libbluetooth-dev libudev-dev -y
+apt-get install ufw fail2ban git nodejs npm mongodb bluetooth bluez libbluetooth-dev libudev-dev pigpio -y
 ufw allow ssh
 ufw limit ssh
 

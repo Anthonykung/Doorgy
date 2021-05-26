@@ -17,6 +17,7 @@ const fs = require('fs');
 const anth = require('./resources/anthonian.js');
 const { execSync, spawn } = require('child_process');
 const http = require('http');
+const bleno = require('bleno');
 const path = require('path');
 
 anth.anthdev();
@@ -354,7 +355,7 @@ function unlock(bool) {
   }
   else {
     // Else lock
-    SERVO2.servoWrite(1000);
+    SERVO2.servoWrite(2000);
   }
 }
 
@@ -405,3 +406,85 @@ function primary(config) {
 }
 
 let primaryOpt = setInterval(primary(config), 100);
+
+/**
+ * Bluetooth Function
+ * 
+ * Update WiFi configuration
+ * 
+ * @param {string} country 
+ * @param {string} ssid 
+ * @param {string} psk 
+ * @param {string} id_str 
+ */
+function bluetooth(country, ssid, psk, id_str) {
+  let wifiConfig = `
+  ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+  update_config=1
+  country=${country}
+  network={
+    ssid="${ssid}"
+    psk="${psk}"
+    id_str=${id_str}
+  }
+  `;
+  fs.writeFile("/etc/wpa_supplicant/wpa_supplicant.conf", wifiConfig, function(err) {
+    if (err) {
+      anth.print(err);
+    }
+    else {
+      console.log("Configuration updated, restarting...");
+      clean();
+      let cmd = execSync('shutdown -h now');
+    }
+  });
+}
+
+/**
+ * Bluetooth Controller
+ */
+bleno.on('stateChange', function(state) {
+  let msg = 'bleno state change' + state;
+  anth.print('msg', msg);
+  if (state === 'poweredOn') {
+    bleno.startAdvertising(client, ['1803']);
+  } else {
+    bleno.stopAdvertising;
+  }
+});
+
+/**
+ * Bluetooth Service
+ */
+bleno.on('advertisingStart', function(err) {
+  anth.print('msg', 'bleno advertising start');
+  if (!err) {
+    bleno.setServices([
+      new bleno.PrimaryService({
+        uuid: 'ade0',
+        characteristics: [
+          new bleno.Characteristic({
+            uuid: 'ade1',
+            properties: ['read', 'write'],
+            secure: ['read', 'write'],
+            value: null,
+            onWriteRequest(data, offset, withoutResponse, callback) {
+              let req = JSON.parse(data.toString());
+              config = req;
+              fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
+                if (err) {
+                  anth.print(err);
+                }
+              });
+              bluetooth(config.wifi.country, config.wifi.ssid, config.wifi.psk, config.wifi.id_str);
+              callback(this.RESULT_SUCCESS);
+            },
+          }),
+        ],
+      }),
+    ]);
+  }
+  else {
+    anth.print('err', err);
+  }
+});

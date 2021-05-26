@@ -4,7 +4,7 @@
   "description": "A smart pet door for your smart home",
   "main": "doorgy.js",
   "scripts": {
-    "install": "node resources/installer.js",
+    "install": "sh resources/doorgy-init.sh && node resources/installer.js",
     "start": "node doorgy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -34,6 +34,7 @@
   "dependencies": {
     "bleno": "^0.5.0",
     "fs-extra": "^9.1.0",
-    "onoff": "^6.0.3"
+    "onoff": "^6.0.3",
+    "pigpio": "^3.3.1"
   }
 }
