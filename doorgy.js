@@ -16,7 +16,7 @@ const pwm = require('pigpio').Gpio;
 const fs = require('fs');
 const anth = require('./resources/anthonian.js');
 const { execSync, spawn } = require('child_process');
-const http = require('http');
+const https = require('https');
 const path = require('path');
 
 anth.anthdev();

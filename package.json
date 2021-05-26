@@ -32,7 +32,6 @@
   },
   "homepage": "https://doorgy.anth.dev",
   "dependencies": {
-    "bleno": "^0.5.0",
     "fs-extra": "^9.1.0",
     "onoff": "^6.0.3",
     "pigpio": "^3.3.1"
