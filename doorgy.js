@@ -299,20 +299,25 @@ function checkNetwork(server) {
      * @memberof KILL
      */
     res.on('data', function (data) {
-      LED_NET.writeSync(1);
-      let ctrl = JSON.parse(data);
-      // if updated config is received, update local config
-      if (ctrl.version && ctrl.version > config.version) {
-        config = ctrl;
-        fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
-          if (err) {
-            anth.print(err);
-          }
-        });
+      try {
+        LED_NET.writeSync(1);
+        let ctrl = JSON.parse(data);
+        // if updated config is received, update local config
+        if (ctrl.version && ctrl.version > config.version) {
+          config = ctrl;
+          fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
+            if (err) {
+              anth.print(err);
+            }
+          });
+        }
+        unlock(ctrl.unlock);
+        open(ctrl.open);
+        setTimeout(() => open(false), 5000);
       }
-      unlock(ctrl.unlock);
-      open(ctrl.open);
-      setTimeout(() => open(false), 5000);
+      catch (err) {
+        console.error('JSON Error:', err);
+      }
     });
   })
   req.write(JSON.stringify(config))
