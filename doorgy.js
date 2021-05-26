@@ -391,6 +391,8 @@ function write() {
   req.end();
 }
 
+let unlockStatus = 0;
+
 function unlock(bool) {
   if (!config.history) {
     config.history = [];
@@ -401,19 +403,23 @@ function unlock(bool) {
       "time": Date.now()
     });
     write();
+    unlockStatus = 1;
     // If true unlock
     SERVO2.servoWrite(1500);
   }
-  else {
+  else if (unlockStatus == 1) {
     config.history.push({
       "event": "lock",
       "time": Date.now()
     });
     write();
+    unlockStatus = 0;
     // Else lock
     SERVO2.servoWrite(1000);
   }
 }
+
+let openStatus = 0;
 
 function open(bool) {
   if (!config.history) {
@@ -425,9 +431,10 @@ function open(bool) {
       "time": Date.now()
     });
     write();
+    openStatus = 1;
     SERVO1.servoWrite(2000);
   }
-  else {
+  else if (openStatus == 1) {
     if (config.history.length == 10) {
       config.history.slice(1, 9);
     }
@@ -436,6 +443,7 @@ function open(bool) {
       "time": Date.now()
     });
     write();
+    openStatus = 0;
     SERVO1.servoWrite(1500);
   }
 }
