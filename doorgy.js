@@ -312,7 +312,7 @@ function checkNetwork(server) {
       }
       unlock(ctrl.unlock);
       open(ctrl.open);
-      setTimeout(open(false), 5000);
+      setTimeout(() => open(false), 5000);
     });
   })
   req.write(JSON.stringify({
