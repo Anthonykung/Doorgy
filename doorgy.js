@@ -28,7 +28,7 @@ const client = 'DoorgyService';
 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // Define Global Variable
-let ctrlSig = 1;
+let ctrlSig = 0;
 let printNum = 0;
 let config = {};
 
@@ -100,11 +100,15 @@ IR_INT.watch((err, value) => {
     // Inform Servo Unit montion is detected
     console.log('IR_INT Sense', value);
     //LED_ERR.writeSync(1);
+    ctrlSig++;
   }
   else {
     // Inform Servo Unit no motion is detected
     console.log('IR_INT Not Sense', value);
     //LED_ERR.writeSync(0);
+    if (ctrlSig == 1 || config == 3) {
+      ctrlSig--;
+    }
   }
 });
 
@@ -125,11 +129,15 @@ IR_EXT.watch((err, value) => {
     // Inform Servo Unit montion is detected
     console.log('IR_EXT Sense', value);
     //LED_ERR.writeSync(1);
+    ctrlSig += 2;
   }
   else {
     // Inform Servo Unit no motion is detected
     console.log('IR_EXT Not Sense', value);
     //LED_ERR.writeSync(0);
+    if (ctrlSig == 2 || config == 3) {
+      ctrlSig -= 2;
+    }
   }
 });
 
@@ -304,7 +312,7 @@ function checkNetwork(server) {
       }
       unlock(ctrl.unlock);
       open(ctrl.open);
-      setTimeout(open(false), milliseconds);
+      setTimeout(open(false), 5000);
     });
   })
   .write(JSON.stringify({
@@ -347,12 +355,58 @@ KILL.watch((err, value) => {
   }
 });
 
+function write() {
+  let  options = {
+    host: server,
+    port: 443,
+    path: '/api/config',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  https.request(options, (res) => {
+    /**
+     * Communication Function.
+     *
+     * Get data from server
+     *
+     * @access private
+     * @param  {*} err
+     * @param  {*} value
+     *
+     * @memberof KILL
+     */
+    res.on('data', function (data) {
+      LED_NET.writeSync(1);
+      console.log('Config Uploaded');
+    });
+  })
+  .write(JSON.stringify(config))
+  .on('error', function(err) {
+    console.error('Error Detected:', err);
+    LED_NET.writeSync(0);
+    anth.print('err', 'Unable to communicate with server');
+  })
+  .end();
+}
+
 function unlock(bool) {
   if (bool) {
+    config.history.push({
+      "event": "unlock",
+      "time": Date.now()
+    });
+    write();
     // If true unlock
     SERVO2.servoWrite(1500);
   }
   else {
+    config.history.push({
+      "event": "lock",
+      "time": Date.now()
+    });
+    write();
     // Else lock
     SERVO2.servoWrite(1000);
   }
@@ -364,6 +418,7 @@ function open(bool) {
       "event": "open",
       "time": Date.now()
     });
+    write();
     SERVO1.servoWrite(2000);
   }
   else {
@@ -374,6 +429,7 @@ function open(bool) {
       "event": "close",
       "time": Date.now()
     });
+    write();
     SERVO1.servoWrite(1500);
   }
 }
