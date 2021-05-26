@@ -395,11 +395,13 @@ function unlock(bool) {
     config.history = [];
   }
   if (bool) {
-    config.history.push({
-      "event": "unlock",
-      "time": Date.now()
-    });
-    write();
+    if (unlockStatus != 1) {
+      config.history.push({
+        "event": "unlock",
+        "time": Date.now()
+      });
+      write();
+    }
     unlockStatus = 1;
     // If true unlock
     SERVO2.servoWrite(1500);
@@ -423,11 +425,13 @@ function open(bool) {
     config.history = [];
   }
   if (bool) {
-    config.history.push({
-      "event": "open",
-      "time": Date.now()
-    });
-    write();
+    if (openStatus != 1) {
+      config.history.push({
+        "event": "open",
+        "time": Date.now()
+      });
+      write();
+    }
     openStatus = 1;
     SERVO1.servoWrite(2000);
   }
