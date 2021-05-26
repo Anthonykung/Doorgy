@@ -447,7 +447,7 @@ function primary(config) {
   let timeNow = new Date();
   let day = weekday[timeNow.getDay()];
   let count = 0;
-  if (!config.open && !config.unlock) {
+  if (config.schedule && !config.open && !config.unlock) {
     config.schedule.forEach(item => {
       if ((day == item.day) && (timeNow.getHours() > item.hour) && (timeNow.getMinutes() > item.minutes) && (timeNow.getHours() < item.endHour) && (timeNow.getMinutes() < item.endMinutes)) {
         unlock(true);
