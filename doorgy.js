@@ -286,7 +286,7 @@ function checkNetwork(server) {
       'Content-Type': 'application/json'
     }
   };
-  https.request(options, (res) => {
+  let req = https.request(options, (res) => {
     /**
      * Communication Function.
      *
@@ -315,16 +315,16 @@ function checkNetwork(server) {
       setTimeout(open(false), 5000);
     });
   })
-  .write(JSON.stringify({
+  req.write(JSON.stringify({
     username: config.username,
     authToken: config.token
   }))
-  .on('error', function(err) {
+  req.on('error', function(err) {
     console.error('Error Detected:', err);
     LED_NET.writeSync(0);
     anth.print('err', 'Unable to communicate with server');
   })
-  .end();
+  req.end();
 }
 
 let netCheck = setInterval(checkNetwork(server), 100);
@@ -365,7 +365,7 @@ function write() {
       'Content-Type': 'application/json'
     }
   };
-  https.request(options, (res) => {
+  let req = https.request(options, (res) => {
     /**
      * Communication Function.
      *
@@ -382,13 +382,13 @@ function write() {
       console.log('Config Uploaded');
     });
   })
-  .write(JSON.stringify(config))
-  .on('error', function(err) {
+  req.write(JSON.stringify(config))
+  req.on('error', function(err) {
     console.error('Error Detected:', err);
     LED_NET.writeSync(0);
     anth.print('err', 'Unable to communicate with server');
   })
-  .end();
+  req.end();
 }
 
 function unlock(bool) {
