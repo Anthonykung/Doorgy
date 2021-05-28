@@ -102,7 +102,7 @@ IR_INT.watch((err, value) => {
   if (err) {
     throw err;
   }
-  else if (value) {
+  else if (value && ctrlSig == 0) {
     // Inform Servo Unit montion is detected
     console.log('IR_INT Sense', value);
     //LED_ERR.writeSync(1);
@@ -131,7 +131,7 @@ IR_EXT.watch((err, value) => {
   if (err) {
     throw err;
   }
-  else if (value) {
+  else if (value && ctrlSig == 0) {
     // Inform Servo Unit montion is detected
     console.log('IR_EXT Sense', value);
     //LED_ERR.writeSync(1);
@@ -478,10 +478,6 @@ function primary(config) {
       unlock(false);
     }
   }
-  if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
-    console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
-    open(true);
-  }
   if (openStatus != 0 && openStatus < 15) {
     console.log('Opened... Status', openStatus);
     openStatus++;
@@ -490,6 +486,10 @@ function primary(config) {
     console.log('Closing...');
     openStatus = 0;
     open(false);
+  }
+  if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
+    console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
+    open(true);
   }
   if (netstat == 0) {
     checkNetwork(server);
