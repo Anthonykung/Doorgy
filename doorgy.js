@@ -321,7 +321,6 @@ function checkNetwork(server, netstat) {
         if (openStatus == 0) {
           open(ctrl.open);
         }
-        setTimeout(() => open(false), 5000);
       }
       catch (err) {
         console.error('JSON Error:', err);
@@ -404,19 +403,17 @@ function unlock(bool) {
   if (!config.history) {
     config.history = [];
   }
-  if (bool) {
-    if (unlockStatus != 1) {
-      config.history.push({
-        "event": "unlock",
-        "time": Date.now()
-      });
-      write();
-    }
+  if (bool && unlockStatus == 0) {
+    config.history.push({
+      "event": "unlock",
+      "time": Date.now()
+    });
+    write();
     unlockStatus = 1;
     // If true unlock
     SERVO2.servoWrite(1500);
   }
-  else if (unlockStatus == 1) {
+  else if (!bool && unlockStatus != 0) {
     config.history.push({
       "event": "lock",
       "time": Date.now()
@@ -432,18 +429,16 @@ function open(bool) {
   if (!config.history) {
     config.history = [];
   }
-  if (bool) {
-    if (openStatus != 1) {
-      config.history.push({
-        "event": "open",
-        "time": Date.now()
-      });
-      write();
-    }
+  if (bool && openStatus == 0) {
+    config.history.push({
+      "event": "open",
+      "time": Date.now()
+    });
+    write();
     openStatus = 1;
     SERVO1.servoWrite(2000);
   }
-  else if (openStatus == 1) {
+  else if (!bool&& openStatus != 0) {
     if (config.history.length == 10) {
       config.history.slice(1, 9);
     }
@@ -483,6 +478,12 @@ function primary(config) {
   }
   else if (ctrlSig != 0 && openStatus == 0) {
     open(true);
+  }
+  if (openStatus != 0 && openStatus < 15) {
+    openStatus++;
+  }
+  else {
+    openStatus = 0;
   }
   if (netstat == 0) {
     checkNetwork(server);
