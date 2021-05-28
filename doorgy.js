@@ -427,7 +427,7 @@ function unlock(bool) {
     write();
     unlockStatus = 0;
     // Else lock
-    SERVO2.servoWrite(2200);
+    SERVO2.servoWrite(900);
   }
 }
 
@@ -444,7 +444,7 @@ function open(bool) {
     });
     write();
     openStatus = 1;
-    SERVO1.servoWrite(2500);
+    SERVO1.servoWrite(2200);
   }
   else if (!bool && openStatus != 0) {
     console.log('closing');
@@ -454,7 +454,7 @@ function open(bool) {
     });
     write();
     openStatus = 0;
-    SERVO1.servoWrite(1500);
+    SERVO1.servoWrite(1000);
   }
 }
 
