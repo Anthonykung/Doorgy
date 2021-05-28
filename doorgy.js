@@ -481,6 +481,9 @@ function primary(config) {
       unlock(false);
     }
   }
+  else if (ctrlSig != 0 && openStatus == 0) {
+    open(true);
+  }
   if (netstat == 0) {
     checkNetwork(server);
   }
