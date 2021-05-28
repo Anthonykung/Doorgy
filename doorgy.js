@@ -482,11 +482,11 @@ function primary(config) {
     console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
     open(true);
   }
-  if (openStatus > 0 && openStatus < 15) {
+  if (openStatus != 0 && openStatus != 15) {
     console.log('Opened... Status', openStatus);
     openStatus++;
   }
-  else if (openStatus <= 15) {
+  else if (openStatus != 0 && openStatus == 15) {
     console.log('Closing...');
     openStatus = 0;
     open(false);
