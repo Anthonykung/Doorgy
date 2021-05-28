@@ -309,6 +309,8 @@ function checkNetwork(server) {
         LED_NET.writeSync(1);
         console.log('Getting Server Data');
         let ctrl = JSON.parse(data);
+        console.log('[Data Received] Version', ctrl.version, 'Unlock:', ctrl.unlock, 'Open:', ctrl.open);
+        console.log('[Current Data] Version', config.version, 'Unlock:', config.unlock, 'Open:', config.open);
         // if updated config is received, update local config
         if (ctrl.version && ctrl.version > config.version) {
           console.log('[Server Updates] Unlock:', ctrl.unlock, 'Open:', ctrl.open);
