@@ -206,6 +206,7 @@ PSH_BTN3.watch((err, value) => {
  * @param  {*} value
  */
 function clean() {
+  clearInterval(primaryOpt);
   LED_PWR.writeSync(1);
   LED_NET.writeSync(0);
   LED_LCK.writeSync(0);
@@ -329,6 +330,7 @@ function checkNetwork(server) {
     anth.print('err', 'Unable to communicate with server');
   })
   req.end();
+  checkNetwork(server);
 }
 
 checkNetwork(server);
