@@ -279,7 +279,7 @@ anth.print('msg', 'Starting Operation');
  * @access private
  * @param  {string} server
  */
-function checkNetwork(server) {
+function checkNetwork(server, netstat) {
   let  options = {
     host: server,
     port: 443,
@@ -289,6 +289,7 @@ function checkNetwork(server) {
       'Content-Type': 'application/json'
     }
   };
+  netstat = 1;
   let req = https.request(options, (res) => {
     /**
      * Communication Function.
@@ -329,11 +330,9 @@ function checkNetwork(server) {
     LED_NET.writeSync(0);
     anth.print('err', 'Unable to communicate with server');
   })
-  req.end();
-  checkNetwork(server);
+  req.end(() => {netstat = 0});
 }
 
-checkNetwork(server);
 
 /**
  * Kill Function.
@@ -477,6 +476,9 @@ function primary(config) {
     if (count == 0) {
       unlock(false);
     }
+  }
+  if (netstat == 0) {
+    checkNetwork(server);
   }
 }
 
