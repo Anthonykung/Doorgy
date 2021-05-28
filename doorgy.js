@@ -494,6 +494,7 @@ function primary(config) {
   if (netstat == 0) {
     checkNetwork(server);
   }
+  console.log('openStatus:', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
 }
 
 let primaryOpt = setInterval(() => primary(config), 1000);
