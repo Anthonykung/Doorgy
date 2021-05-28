@@ -317,7 +317,7 @@ function checkNetwork(server) {
             }
           });
         }
-        if (unlockStatus == 0 && ctrl.open == true) {
+        if (unlockStatus == 0 && ctrl.unlock == true) {
           unlock(true);
         }
         if (openStatus == 0 && ctrl.open == true) {
