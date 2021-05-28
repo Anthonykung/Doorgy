@@ -486,7 +486,7 @@ function primary(config) {
     console.log('Opened... Status', openStatus);
     openStatus++;
   }
-  else if (openStatus == 15) {
+  else {
     console.log('Closing...');
     openStatus = 0;
     open(false);
