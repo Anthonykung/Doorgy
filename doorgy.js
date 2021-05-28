@@ -440,7 +440,7 @@ function open(bool) {
     });
     write();
     openStatus = 1;
-    SERVO1.servoWrite(2000);
+    SERVO1.servoWrite(1000);
   }
   else if (!bool && openStatus != 0) {
     console.log('closing');
@@ -475,7 +475,7 @@ function primary(config) {
       }
     });
   }
-  if (count == 0 && config.unlock == false) {
+  if (count == 0 && config.unlock == true) {
     unlock(false);
   }
   if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
