@@ -476,7 +476,7 @@ function primary(config) {
       unlock(false);
     }
   }
-  if (ctrlSig != 0 && openStatus == 0) {
+  if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
     console.log('Opening...');
     open(true);
   }
@@ -484,7 +484,7 @@ function primary(config) {
     console.log('Opened... Status', openStatus);
     openStatus++;
   }
-  else {
+  else if (openStatus == 15) {
     console.log('Closing...');
     openStatus = 0;
     open(false);
