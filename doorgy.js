@@ -31,6 +31,8 @@ const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 let ctrlSig = 0;
 let printNum = 0;
 let config = {};
+let unlockStatus = 0;
+let openStatus = 0;
 
 // Define IR gpio
 const IR_INT = new gpio(5, 'in', 'both');
@@ -106,7 +108,7 @@ IR_INT.watch((err, value) => {
     // Inform Servo Unit no motion is detected
     console.log('IR_INT Not Sense', value);
     //LED_ERR.writeSync(0);
-    if (ctrlSig == 1 || config == 3) {
+    if (ctrlSig == 1 || ctrlSig == 3) {
       ctrlSig--;
     }
   }
@@ -202,8 +204,6 @@ PSH_BTN3.watch((err, value) => {
  * @param  {*} value
  */
 function clean() {
-  clearInterval(primaryOpt);
-  clearInterval(netCheck);
   LED_PWR.writeSync(1);
   LED_NET.writeSync(0);
   LED_LCK.writeSync(0);
@@ -314,6 +314,7 @@ function checkNetwork(server) {
         unlock(ctrl.unlock);
         open(ctrl.open);
         setTimeout(() => open(false), 5000);
+        checkNetwork(server);
       }
       catch (err) {
         console.error('JSON Error:', err);
@@ -329,7 +330,7 @@ function checkNetwork(server) {
   req.end();
 }
 
-let netCheck = setInterval(() => checkNetwork(server), 1000);
+if (net)
 
 /**
  * Kill Function.
@@ -393,8 +394,6 @@ function write() {
   req.end();
 }
 
-let unlockStatus = 0;
-
 function unlock(bool) {
   if (!config.history) {
     config.history = [];
@@ -422,8 +421,6 @@ function unlock(bool) {
     SERVO2.servoWrite(1000);
   }
 }
-
-let openStatus = 0;
 
 function open(bool) {
   if (!config.history) {

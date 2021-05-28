@@ -5,6 +5,7 @@
 # Ignore Configuration Files
 config/
 config.json
+.vscode
 
 # Ignore Logs
 logs/
