@@ -317,11 +317,11 @@ function checkNetwork(server) {
             }
           });
         }
-        if (unlockStatus == 0) {
-          unlock(ctrl.unlock);
+        if (unlockStatus == 0 && ctrl.open == true) {
+          unlock(true);
         }
-        if (openStatus == 0) {
-          open(ctrl.open);
+        if (openStatus == 0 && ctrl.open == true) {
+          open(true);
         }
       }
       catch (err) {
