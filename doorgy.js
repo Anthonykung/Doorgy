@@ -307,21 +307,23 @@ function checkNetwork(server) {
     res.on('data', function (data) {
       try {
         LED_NET.writeSync(1);
+        console.log('Getting Server Data');
         let ctrl = JSON.parse(data);
         // if updated config is received, update local config
         if (ctrl.version && ctrl.version > config.version) {
+          console.log('[Server Updates] Unlock:', ctrl.unlock, 'Open:', ctrl.open);
           config = ctrl;
           fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(config), function(err) {
             if (err) {
               anth.print(err);
             }
           });
-        }
-        if (unlockStatus == 0 && ctrl.unlock == true) {
-          unlock(true);
-        }
-        if (openStatus == 0 && ctrl.open == true) {
-          open(true);
+          if (unlockStatus == 0 && ctrl.unlock == true) {
+            unlock(true);
+          }
+          if (openStatus == 0 && ctrl.open == true) {
+            open(true);
+          }
         }
       }
       catch (err) {
@@ -440,7 +442,7 @@ function open(bool) {
     });
     write();
     openStatus = 1;
-    SERVO1.servoWrite(1000);
+    SERVO1.servoWrite(2000);
   }
   else if (!bool && openStatus != 0) {
     console.log('closing');
@@ -479,7 +481,7 @@ function primary(config) {
     }
   }
   console.log('config unlock:', config.unlock, 'unlockStatus:', unlockStatus);
-  if (count == 0 && config.unlock == false && unlockStatus != 0) {
+  if (count == 0 && config.unlock == false && unlockStatus == 1) {
     unlock(false);
   }
   if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
