@@ -33,6 +33,8 @@ let printNum = 0;
 let config = {};
 let unlockStatus = 0;
 let openStatus = 0;
+let netstat = 0;
+let optStatus = 1;
 
 // Define IR gpio
 const IR_INT = new gpio(5, 'in', 'both');
@@ -314,7 +316,6 @@ function checkNetwork(server) {
         unlock(ctrl.unlock);
         open(ctrl.open);
         setTimeout(() => open(false), 5000);
-        checkNetwork(server);
       }
       catch (err) {
         console.error('JSON Error:', err);
@@ -330,7 +331,7 @@ function checkNetwork(server) {
   req.end();
 }
 
-if (net)
+checkNetwork(server);
 
 /**
  * Kill Function.
