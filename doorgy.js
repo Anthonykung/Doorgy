@@ -67,8 +67,8 @@ LED_ERR.writeSync(0);
 
 // Turn on power indicator
 LED_PWR.writeSync(1);
-open(false);
-unlock(false);
+SERVO1.servoWrite(1500);
+SERVO2.servoWrite(1500);
 
 
 /**
@@ -415,7 +415,7 @@ function unlock(bool) {
     // If true unlock
     SERVO2.servoWrite(1500);
   }
-  else if (!bool && unlockStatus != 0) {
+  else if (!bool && unlockStatus == 1) {
     config.history.push({
       "event": "lock",
       "time": Date.now()
@@ -467,14 +467,18 @@ function primary(config) {
   let timeNow = new Date();
   let day = weekday[timeNow.getDay()];
   let count = 0;
-  if (config.schedule && !config.open && !config.unlock) {
+  if (config.schedule && config.open == false && config.unlock == false) {
     config.schedule.forEach(item => {
       if ((day == item.day) && (timeNow.getHours() > item.hour) && (timeNow.getMinutes() > item.minutes) && (timeNow.getHours() < item.endHour) && (timeNow.getMinutes() < item.endMinutes)) {
         unlock(true);
         count++;
       }
     });
+    if (count == 0) {
+      unlock(false);
+    }
   }
+  console.log('config unlock:', config.unlock, 'unlockStatus:', unlockStatus);
   if (count == 0 && config.unlock == false && unlockStatus != 0) {
     unlock(false);
   }
