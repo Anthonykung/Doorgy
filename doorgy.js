@@ -475,7 +475,7 @@ function primary(config) {
       }
     });
   }
-  if (count == 0 && config.unlock == true && unlockStatus != 0) {
+  if (count == 0 && config.unlock == false && unlockStatus != 0) {
     unlock(false);
   }
   if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
