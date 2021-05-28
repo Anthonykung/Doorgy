@@ -474,9 +474,9 @@ function primary(config) {
         count++;
       }
     });
-    if (count == 0) {
-      unlock(false);
-    }
+  }
+  if (count == 0 && config.unlock == false) {
+    unlock(false);
   }
   if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
     console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
