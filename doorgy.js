@@ -279,7 +279,7 @@ anth.print('msg', 'Starting Operation');
  * @access private
  * @param  {string} server
  */
-function checkNetwork(server, netstat) {
+function checkNetwork(server) {
   let  options = {
     host: server,
     port: 443,
@@ -429,7 +429,7 @@ function open(bool) {
   if (!config.history) {
     config.history = [];
   }
-  if (bool && openStatus == 0) {
+  if (bool && openStatus == 0 && unlockStatus == 0) {
     config.history.push({
       "event": "open",
       "time": Date.now()
@@ -476,13 +476,16 @@ function primary(config) {
       unlock(false);
     }
   }
-  else if (ctrlSig != 0 && openStatus == 0) {
+  if (ctrlSig != 0 && openStatus == 0) {
+    console.log('Opening...');
     open(true);
   }
   if (openStatus != 0 && openStatus < 15) {
+    console.log('Opened... Status', openStatus);
     openStatus++;
   }
   else {
+    console.log('Closing...');
     openStatus = 0;
     open(false);
   }
