@@ -428,10 +428,12 @@ function unlock(bool) {
 }
 
 function open(bool) {
+  console.log('open called');
   if (!config.history) {
     config.history = [];
   }
-  if (bool && openStatus == 0 && unlockStatus == 0) {
+  if (bool && openStatus == 0 && unlockStatus == 1) {
+    console.log('opening');
     config.history.push({
       "event": "open",
       "time": Date.now()
@@ -441,9 +443,7 @@ function open(bool) {
     SERVO1.servoWrite(2000);
   }
   else if (!bool&& openStatus != 0) {
-    if (config.history.length == 10) {
-      config.history.slice(1, 9);
-    }
+    console.log('closing');
     config.history.push({
       "event": "close",
       "time": Date.now()
