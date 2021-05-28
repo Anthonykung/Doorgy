@@ -67,6 +67,8 @@ LED_ERR.writeSync(0);
 
 // Turn on power indicator
 LED_PWR.writeSync(1);
+open(false);
+unlock(false);
 
 
 /**
@@ -477,7 +479,7 @@ function primary(config) {
     }
   }
   if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
-    console.log('Opening...');
+    console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
     open(true);
   }
   if (openStatus != 0 && openStatus < 15) {
