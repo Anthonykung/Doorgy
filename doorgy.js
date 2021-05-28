@@ -484,6 +484,7 @@ function primary(config) {
   }
   else {
     openStatus = 0;
+    open(false);
   }
   if (netstat == 0) {
     checkNetwork(server);
