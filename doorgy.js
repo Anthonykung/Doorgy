@@ -315,8 +315,12 @@ function checkNetwork(server, netstat) {
             }
           });
         }
-        unlock(ctrl.unlock);
-        open(ctrl.open);
+        if (unlockStatus == 0) {
+          unlock(ctrl.unlock);
+        }
+        if (openStatus == 0) {
+          open(ctrl.open);
+        }
         setTimeout(() => open(false), 5000);
       }
       catch (err) {
