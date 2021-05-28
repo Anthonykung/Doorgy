@@ -442,7 +442,7 @@ function open(bool) {
     openStatus = 1;
     SERVO1.servoWrite(2000);
   }
-  else if (!bool&& openStatus != 0) {
+  else if (!bool && openStatus != 0) {
     console.log('closing');
     config.history.push({
       "event": "close",
