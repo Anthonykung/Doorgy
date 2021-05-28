@@ -67,8 +67,8 @@ LED_ERR.writeSync(0);
 
 // Turn on power indicator
 LED_PWR.writeSync(1);
-SERVO1.servoWrite(1500);
-SERVO2.servoWrite(1500);
+SERVO1.servoWrite(1000);
+SERVO2.servoWrite(900);
 
 
 /**
@@ -82,6 +82,7 @@ fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
   if (!err) {
     LED_ERR.writeSync(0);
     config = JSON.parse(data);
+    unlockStatus = config.unlock;
   }
   else {
     anth.print('err', err);
@@ -338,6 +339,7 @@ function checkNetwork(server) {
     console.error('Error Detected:', err);
     LED_NET.writeSync(0);
     anth.print('err', 'Unable to communicate with server');
+    netstat = 0;
   })
   req.end(() => {netstat = 0});
 }
