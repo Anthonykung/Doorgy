@@ -488,7 +488,6 @@ function primary(config) {
   }
   else if (openStatus != 0 && openStatus == 15) {
     console.log('Closing...');
-    openStatus = 0;
     open(false);
   }
   if (netstat == 0) {
