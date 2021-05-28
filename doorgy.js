@@ -478,7 +478,11 @@ function primary(config) {
       unlock(false);
     }
   }
-  if (openStatus != 0 && openStatus < 15) {
+  if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
+    console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
+    open(true);
+  }
+  if (openStatus != 0 || openStatus < 15) {
     console.log('Opened... Status', openStatus);
     openStatus++;
   }
@@ -486,10 +490,6 @@ function primary(config) {
     console.log('Closing...');
     openStatus = 0;
     open(false);
-  }
-  if (unlockStatus != 0 && ctrlSig != 0 && openStatus == 0) {
-    console.log('Opening...', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
-    open(true);
   }
   if (netstat == 0) {
     checkNetwork(server);
