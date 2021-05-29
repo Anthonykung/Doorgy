@@ -6,7 +6,8 @@
   "scripts": {
     "install": "sh resources/doorgy-init.sh && node resources/installer.js",
     "start": "node doorgy.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "config": "node resources/config.js"
   },
   "repository": {
     "type": "git",

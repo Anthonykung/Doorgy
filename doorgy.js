@@ -35,6 +35,7 @@ let unlockStatus = 0;
 let openStatus = 0;
 let netstat = 0;
 let optStatus = 1;
+let writeStatus = 0;
 
 // Define IR gpio
 const IR_INT = new gpio(5, 'in', 'both');
@@ -87,6 +88,16 @@ fs.readFile(path.join(__dirname, 'config.json'), function(err, data) {
   else {
     anth.print('err', err);
     LED_ERR.writeSync(1);
+    let data = {
+      "version": 0,
+      "username": "Anthonykung",
+      "password": "1234"
+    }
+    fs.writeFile(path.join(__dirname, 'config.json'), JSON.stringify(data), function(err) {
+      if (err) {
+        anth.print(err);
+      }
+    });
   }
 });
 
@@ -280,9 +291,8 @@ anth.print('msg', 'Starting Operation');
  *
  * @name   checkNetwork
  * @access private
- * @param  {string} server
  */
-function checkNetwork(server) {
+function checkNetwork() {
   let  options = {
     host: server,
     port: 443,
@@ -293,6 +303,7 @@ function checkNetwork(server) {
     }
   };
   netstat = 1;
+  const LED_NET = new gpio(13, 'out');
   let req = https.request(options, (res) => {
     /**
      * Communication Function.
@@ -372,6 +383,10 @@ KILL.watch((err, value) => {
 });
 
 function write() {
+  while (writeStatus == 1) {
+    // wait and do nothing
+  }
+  writeStatus = 1;
   let  options = {
     host: server,
     port: 443,
@@ -381,6 +396,7 @@ function write() {
       'Content-Type': 'application/json'
     }
   };
+  const LED_NET = new gpio(13, 'out');
   let req = https.request(options, (res) => {
     /**
      * Communication Function.
@@ -419,6 +435,7 @@ function unlock(bool) {
     write();
     unlockStatus = 1;
     // If true unlock
+    LED_LCK.writeSync(0);
     SERVO2.servoWrite(1500);
   }
   else if (!bool && unlockStatus == 1) {
@@ -429,6 +446,7 @@ function unlock(bool) {
     write();
     unlockStatus = 0;
     // Else lock
+    LED_LCK.writeSync(1);
     SERVO2.servoWrite(900);
   }
 }
@@ -467,9 +485,8 @@ function open(bool) {
  *
  * @name   checkNetwork
  * @access private
- * @param  {object} config
  */
-function primary(config) {
+function primary() {
   let timeNow = new Date();
   let day = weekday[timeNow.getDay()];
   let count = 0;
@@ -506,4 +523,4 @@ function primary(config) {
   console.log('openStatus:', openStatus, 'ctrl:', ctrlSig, 'unlock:', unlockStatus);
 }
 
-let primaryOpt = setInterval(() => primary(config), 1000);
+let primaryOpt = setInterval(primary, 1000);
