@@ -49,9 +49,10 @@ Doorgy is part of the Doorgy Project, all parts of Doorgy Project are required t
 - 2x Servo Motors with Extended Arms
 - 1x Battery Pack
 - 1x Micro USB Power Supply
-- 1x Doorgy Exterial Frame
-- 1x Doorgy Interial Frame with Circuit Housing
+- 1x Doorgy Exterial Top/Bottom/Left/Right Frame
+- 1x Doorgy Interial Top/Bottom/Left/Right Frame (Top frame comes with Circuit Housing)
 - 1x Doorgy Door
+- 1x Doorgy Door Connector & Doorgy Servo Connector
 - 4x 1 Inch Doorgy Frame Screw
 - 2x 1/4 Inch Doorgy Housing Screw
 - 2x 1/4 Inch Doorgy Door Screw
@@ -123,8 +124,8 @@ This assume you have the Doorgy Installation Package and met all the prerequisit
 ### System Configuration
 
 1. Install the Doorgy app on your smartphone
-2. Open the Doorgy app and follow the display to connect Doorgy to your phone using Bluetooth
-3. Follow the app display to setup WiFi connection
+2. Open the Doorgy app and create an account
+3. Setup WiFi connection with Raspberry Pi and run `npm run config`
 4. Finish configuring Doorgy with the app
 5. Once configuration is complete, follow the display to restart Doorgy (this is only needed during initial system configuration)
 6. Enjoy your awesome new smart pet door!

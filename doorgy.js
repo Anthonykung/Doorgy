@@ -490,14 +490,14 @@ function primary() {
   let timeNow = new Date();
   let day = weekday[timeNow.getDay()];
   let count = 0;
-  if (config.schedule && config.open == false && config.unlock == false) {
+  if (config.schedule) {
     config.schedule.forEach(item => {
       if ((day == item.day) && (timeNow.getHours() > item.hour) && (timeNow.getMinutes() > item.minutes) && (timeNow.getHours() < item.endHour) && (timeNow.getMinutes() < item.endMinutes)) {
         unlock(true);
         count++;
       }
     });
-    if (count == 0) {
+    if (count == 0 && config.unlock == false) {
       unlock(false);
     }
   }
